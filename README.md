@@ -5,44 +5,48 @@
 ## The fastest way to build a lightning speed Vulkan App!
 
 
+
+
+
+
+
+
 ## **Big Picture**
 
-GPU Script is a high speed app engine and drawing library. Our focus is making the world's fastest cutting edge technology simpler to use.
+GpuScript is a high-speed app engine and drawing library.
 
-We simplify workflow with:  
+The primary technology used is Vulkan, which is a low-level graphics card API that is cross-platform and cross-hardware.
 
-  * Detailed documentation with lots of diagrams
-  * Embedded tutorials to get you started quickly
-  * Keeping code organized, well named, and well documented
-  * Hardware and build testing to avoid pitfalls
-  * Templated components from big features to tiny micro details
+Vulkan is well known for being powerful but difficult to use.
 
-GPU progamming is an exciting frontier!
+We’ve spent years analyzing many different open source Vulkan frameworks and carefully considered their strengths and weaknesses.  Often:
 
-We are bringing it together with a set of both high-level and low-level tools.
-Best of all it's [MIT License](LICENSE.txt) so you can use it in any project from experiment to commercial hit.
+* They are specific to only one platform, often Windows or Linux
+* Are not tested regularly, so are out of date with the latest Vulkan builds
+* They are draw platform generic (for example including OGL and Metal interfaces) which leads to a ton of complexity
 
-GPU speeds are acclerating at a vastly higher rate than CPU, and a sea change is about to happen in
-application development.  Out goal is to help you get to the race track faster.
+So, we’ve done a mash-up of the very best Vulkan frameworks and adapted them to work well with:
 
+* GLFW to simplify window management and events across platforms
+* Windows, Mac, and Linux through tons of testing and native code (for example file open dialogues)
+* CMake so that there is a simple standardized process to compile across platforms
+* Well known shader repositories like Shadertoy so it’s easy to grab example code and experiment
 
+The end result is a Vulkan platform that is very flexible for whatever you need:
+* For the beginner there’s tons of tutorials and diagrams for a great out of box experience
+* For the expert it’s easy to rip apart and change well tested, templated and documented code
 
-## **Fast Track To Vulkan**
+GpuScript also includes a powerful adaptive user interface which has many features:
 
-For those who want to do more with Vulkan:
-
-  * We're passionate members of the Vulkan community
-  * We believe it's a growing platform with a great future, backed by the hardware vendors
-  * It gets faster with more features every year
-  * Vulkan is amazing for cross-platform development.  We got our Ubuntu build ported in 1 day.
-
-We went through all the trial by fire of months to get the triangle up that Vulkan is famous for.
-Our hope is to help others get up and running with Vulkan faster.
+* It’s easy to make complex application layouts in a few lines of code
+* Window panes management is simplified so it adaptively resizes based on constraints.
+* Window panes can be: fixed, percentage based, floating and draggable
+* Hierarchical panes can be contained within other panes, and tutorials show how to make standard UI patterns found in major applications
 
 
 ## **Documentation**
 
-* [Overview](Doc/Code_Big_Picture_Diagram.pdf)
+* [Code Diagram Overview](Doc/Code_Big_Picture_Diagram.pdf)
 * [Install Notes (PC, Mac, and Ubuntu)](Doc/Install_Notes_Index.md)
 * [Tutorials](Doc/Tutorials_Index.md)
 * [UILib Functions](Doc/UILib_Starting_Functions.md)
