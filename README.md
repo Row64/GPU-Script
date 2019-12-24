@@ -38,7 +38,7 @@ The end result is a Vulkan platform that is very flexible for whatever you need:
 GpuScript also includes a powerful adaptive user interface which has many features:
 
 * It’s easy to make complex application layouts in a few lines of code
-* Window panes management is simplified so it adaptively resizes based on constraints.
+* Window pane management is simplified so it adaptively resizes based on constraints.
 * Window panes can be: fixed, percentage based, floating and draggable
 * Hierarchical panes can be contained within other panes, and tutorials show how to make standard UI patterns found in major applications
 
