@@ -1,5 +1,4 @@
 <br>
-<br>
 <img src="Doc/images/GPUscript.png" width="500">
 
 ## The fastest way to build a lightning speed Vulkan App!
@@ -46,10 +45,10 @@ GpuScript also includes a powerful adaptive user interface which has many featur
 
 ## **Documentation**
 
-* [Code Diagram Overview](Doc/Code_Big_Picture_Diagram.pdf)
-* [Install Notes (PC, Mac, and Ubuntu)](Doc/Install_Notes_Index.md)
-* [Tutorials](Doc/Tutorials_Index.md)
-* [UILib Functions](Doc/UILib_Starting_Functions.md)
+* [Install Guide (PC, Mac, and Ubuntu)](Doc/Install_Notes_Index.md)
+* [Get Started & Tutorials](Doc/Tutorials_Index.md)
+* [Code Diagram](Doc/Code_Big_Picture_Diagram.pdf)
+* [User Interface Library](Doc/UILib_Starting_Functions.md)
 * [FAQ](Doc/FAQ.md)
 * [Vulkan Version Compatibility Table](Doc/Vulkan_Compatibility.md)
 * [MIT License](LICENSE.txt)

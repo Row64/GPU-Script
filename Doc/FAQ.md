@@ -40,7 +40,7 @@ Yes, this is a great platform for 2D.  The Vulkan community is primarily oriente
 
 Yes, since Vulkan is designed for 3D you can.  Just use the SUI Shader UI to pass 3D verticies, vertex colors and uv coordinates.  
 
-We have a [tutorial](Tutorials_ShaderToy_Particles.md) showing how to run ShaderTty examples here which would help get you started.
+We have a [tutorial](Tutorials_ShaderToy_Particles.md) showing how to run ShaderToy examples here which would help get you started.
 
 -----------------------------------------------------------------------
 ## **What is the relationship between this code and ImGUI?**
@@ -53,7 +53,7 @@ Our team has been doing over 20 years of UI programming so we had quite a few ap
 
 So we added our own general drawing and UI Library found in UILib.cpp for this type of scenario.
 
-So we like ImGUI, consider it a sister product we've embedded.  You may find both libraries useful for different scenarios and call both.  In our documentation "Triangle UI" refers to the combination of ImGUI & UILib.
+So we like ImGUI, and consider it a sister product we've embedded.  You may find both libraries useful for different scenarios and call both.  In our documentation "Triangle UI" refers to the combination of ImGUI & UILib.
 
 We also have some additional UI technology that we're thinking about integrating that could widen the scope even more.
 
