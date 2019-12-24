@@ -28,7 +28,7 @@ These are terms that help simplify the 2 major types of drawing pipelines:
  
 2. A quick approach to get stuff on the screen fast using drawing libray calls.  Things like: AddRectangle, AddLine, AddText, ect.  You just make the stuff you need and don't worry about the low-level stuff below.  We call this TUI or "Triangle Based UI Draw Library".
 
-    Often it's useful to use a mix of both, so we made a framework where it's easy to mix them together. We have a more detailed explanation of this topic here. 
+    Often it's useful to use a mix of both, so we made a framework where it's easy to mix them together. We have a more detailed explanation of this topic [here](Tutorials_SUIvsTUI.md). 
 
 -----------------------------------------------------------------------
 ## **Can I use this to do 2D?  To make a desktop app?**
