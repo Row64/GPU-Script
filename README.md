@@ -50,4 +50,6 @@ GpuScript also includes a powerful adaptive user interface which has many featur
 <br><br>
 <img src="Doc/images/DRComputing.png" width="500">
 
-[![Analytics](https://ga-beacon.appspot.com/UA-154737984-2/DillonRidgeComputing/GPU-Script?pixel)](https://github.com/igrigorik/ga-beacon)
+<br>
+
+[![Analytics](https://ga-beacon.appspot.com/UA-154737984-2/DillonRidgeComputing/GPU-Script)](https://github.com/igrigorik/ga-beacon)
