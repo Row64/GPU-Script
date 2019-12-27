@@ -63,11 +63,25 @@ We also have some additional UI technology that we're thinking about integrating
 Immediate Mode UI programming is amazing, this is a great intro about the concepts:
 https://www.youtube.com/watch?v=Z1qyvQsjK5Y&t=2s
 
+The great power of immediate mode UI is only what is drawn is evaluated in code.
+
+>
+> *The fastest instruction is the one that is never executed.*
+>
+> -- **<cite>Michael Abrash</cite>**
+>
+
 It also changes the way you think about events.  Instead of thinking about triggers when IO events happening, you use state (InputStateData, DisplayStateData) to read what has changed.
 
-State is more powerful because it is syncronized with the Vulkan draw pipeline. A mouse event that triggered a single frame drawing reaction could easily happen mid-draw and be lost if there was no syncronization.
 
 However there is a UI idea that we consider beyond Immediate Mode - that is the UI built by fragment shaders.  
+
+
+> *Learning to write graphics shaders is learning to leverage the
+> GPU with its thousands of cores all running in parallel*
+>
+> -- **<cite>Omar Shehata</cite>**
+>
 
 Fragment shader UI has the potential to be mind-blowing fast because everything is calculated in parallel.  A good inspiration reference for this was made by Intel called [FastUIDraw](https://github.com/intel/fastuidraw).  Although it never took off the ideas are amazing and it was around 10X faster than any other UI approach:
 https://github.com/intel/fastuidraw
@@ -93,6 +107,13 @@ will return true for only one frame of drawing.  So you can do something more co
 Under the hood this is happening both in `PipelineManager::UpdateUIInputs` and ImGui. They make sure that a change value is only for one frame.  Either carrying over last value (mouse change) or buffering values (key change) and filling state.
 
 <img src="images/faq_keystate.jpg" width="800">
+
+-----------------------------------------------------------------------
+## **How can I get started with shader coding?**
+
+Check out this "Beginner's Guide to Coding Graphics Shaders"
+
+https://gamedevelopment.tutsplus.com/tutorials/a-beginners-guide-to-coding-graphics-shaders--cms-23313
 
 -----------------------------------------------------------------------
 ## **How does anti-aliasing work?**
