@@ -63,15 +63,15 @@ In October 2019 Google announced at the [X.Org Developer's Conference](https://x
     * WebGPU has Vulkan backend
     * The core drawing libraries in Chrome (SKIA) have a Vulkan backend
 * Fushia is the next generation Google OS for PCs, phones, tablets and IOT devices.  It's 100% Vulkan - Vulkan only for low-level drawing
-    * Google is embracing a Linux + Vulkan stack for gaming.  Stadia, Google’s cloud gaming service is 100% Vulkan on Linux   
-    * Google wrote SwiftShader to run Vulkan on multi-threaded CPUs so that it is 100% compatible on all hardware - even without a graphics driver or a graphics card
+* Google is embracing a Linux + Vulkan stack for gaming.  Stadia, Google’s cloud gaming service is 100% Vulkan on Linux   
+* Google wrote SwiftShader to run Vulkan on multi-threaded CPUs so that it is 100% compatible on all hardware - even without a graphics driver or a graphics card
 
 ### **Valve**
 
 Valve has funded and driven many important aspects of Vulkan becoming a full-fledged cross-platform API:
 * They arranged for Vulkan to work simply on Mac by getting MoltenVK to be released Open Source.
-    * They fund LunarG who creates the main Vulkan SDK and debugging tools (used by GpuScript).
-    * They are active in bringing more Windows games to Linux through Vulkan, especially through the Steam gaming platform.
+* They fund LunarG who creates the main Vulkan SDK and debugging tools (used by GpuScript).
+* They are active in bringing more Windows games to Linux through Vulkan, especially through the Steam gaming platform.
 
 > We have an ongoing investment in making Vulkan a competitive and well-supported graphics API, as well as making sure it has first-class support on Linux platforms.
 >
