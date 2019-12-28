@@ -1,4 +1,4 @@
-# **Get_Started** &emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;&emsp;in under 10 minutes
+# **Get Started** - in under 10 minutes
 
 ## Outline
 
