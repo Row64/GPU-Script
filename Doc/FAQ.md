@@ -94,13 +94,11 @@ Here are neutral parties:
 
 ### **Apple**
 
-Vulkan code can run on top of Metal (the Apple GPU SDK) using MoltenVK. Apple announced they will remove OpenGL from future macOS releases.
+Vulkan code can run on top of Metal (the Apple GPU SDK) using MoltenVK.  This is how GpuScript runs on the Mac and is compatible with iOS.
 
-This inadvertently helps Vulkan, because all cross-platform GPU libraries need to target Vulkan or Metal if they want to keep macOS supported.
+An interesting recent development is Apple announced they will remove OpenGL (an older but very popular GPU graphics API) from future macOS releases.  This inadvertently helps Vulkan, because all cross-platform GPU libraries need to target Vulkan or Metal if they want to keep macOS supported.
 
 Apple is also very active and is one of the leaders in the WebGPU standard being developed for web browsers.
-
-So, in the near future, WebGPU will also be an additional compile target for GpuScript to reach the Mac.  It is also possible to port the GpuScript library to target Metal directly, as it has a similar structure to Vulkan.
 
 >This is Apple's draft proposal for the WebGPU API. It started as a mapping of Metal to JavaScript, but that won't be where it ends up. Not only are there some things in Metal that don't quite fit with Vulkan and D3D12, we also don't want to be tied to the Metal API.
 >
