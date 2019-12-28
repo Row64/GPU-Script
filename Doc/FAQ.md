@@ -15,7 +15,7 @@
 In our internal tests where we re-wrote parts of other applications the increase is 2X to 50X faster.  And as GPUs get faster the increase will grow. Vulkan is a cross-platform API made by the GPU hardware vendors (mostly: Intel, AMD and NVidea).  So it's going to be the fastest and lowest level cross-platform option.
 
 -----------------------------------------------------------------------
-## **Is Vulkan growing? Is Vulkan is a good choice for the core of an app?**
+## **Is Vulkan growing? Is Vulkan a good choice for the core of an app?**
 
 Yes, Vulkan is growing, and yes, Vulkan is an excellent choice for an app core - both now and looking forward.
 
@@ -113,7 +113,7 @@ So, in the near future, WebGPU will also be an additional compile target for Gpu
 -----------------------------------------------------------------------
 ## **Why is this project called GPU Script, but from what I see only runs C++?**
 
-Our goal is to simplify using Vulkan to the point is easy to script. We are in the middle of a JavaScript layer and have our eye on Python. Once we have these pieces up and running and well tested we will bring them into the build.
+Our goal is to simplify using Vulkan to the point where it is easy to script. We are in the middle of a JavaScript layer and have our eye on Python. Once we have these pieces up and running and well tested we will bring them into the build.
 
 -----------------------------------------------------------------------
 ## **I don't get what you mean by SUI and TUI?  What does this mean?  I don't see it in other Vulkan projects.**
@@ -229,7 +229,7 @@ In fact the first 8 months of dev when this project started was on Mac.  Apple i
 -----------------------------------------------------------------------
 ## **Can I run this on Android?**
 
-Vulkan works really well on Android.  Both Google & Samsung are big supporters of Vulkan. We have only done some intial tests but here's the main site if you want to investigate porting it: https://developer.android.com/ndk/guides/graphics/index.html
+Vulkan works really well on Android.  Both Google & Samsung are big supporters of Vulkan. We have only done some initial tests, but here's the main site if you want to investigate porting it: https://developer.android.com/ndk/guides/graphics/index.html
 
 -----------------------------------------------------------------------
 ## **Can I run this on the web?**
@@ -247,7 +247,7 @@ Just recently there has been an amazing development in running Vulkan on hardwar
 * With graphics cards and graphics drivers that don't support Vulkan 
 * With no graphics card
 
-The development is the open source Google project Swiftshader. SwiftShader is a high-performance CPU-based implementation of the Vulkan. It’s goal is to provide hardware independence for advanced 3D graphics.
+The development is the open source Google project Swiftshader. SwiftShader is a high-performance CPU-based implementation of the Vulkan. Its goal is to provide hardware independence for advanced 3D graphics.
 
 What's cool is that SwiftShader is optimized to turn Vulkan into smart, multi-threaded CPU calls and improves the performance of games or 3D content on low-end machines.
 
