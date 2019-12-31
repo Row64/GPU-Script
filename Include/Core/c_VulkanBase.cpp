@@ -192,12 +192,14 @@ namespace AppCore {
         // https://github.com/KhronosGroup/Vulkan-Hpp/issues/242
         VkSurfaceKHR tmpSurface;
         VkResult err = glfwCreateWindowSurface(Vulkan.Instance, Window.WindowPtr, nullptr, &tmpSurface);
-        //VkResult err = glfwCreateWindowSurface(*Vulkan.Instance, Window.WindowPtr, nullptr, reinterpret_cast<VkSurfaceKHR*>(&Vulkan.PresentationSurface) );
+
         if (err) {
             std::runtime_error( "Window surface creation failed" );
         }
-        vk::ObjectDestroy<vk::Instance, vk::DispatchLoaderStatic> surfaceDeleter(Vulkan.Instance);
-        Vulkan.PresentationSurface = vk::UniqueSurfaceKHR(tmpSurface, surfaceDeleter);
+
+        // Issues with Vulkan 1.1.130
+        // https://github.com/KhronosGroup/Vulkan-Hpp/issues/467
+        Vulkan.PresentationSurface = vk::UniqueSurfaceKHR(tmpSurface, Vulkan.Instance);
 
         std::cout << "--- VulkanBase::CreatePresentationSurface     Created Vulkan Surface" << std::endl;
     }
