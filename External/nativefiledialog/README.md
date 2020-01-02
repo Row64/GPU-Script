@@ -1,3 +1,11 @@
+Original Source: https://github.com/aarcangeli/nativefiledialog-cmake
+
+Modifications Copyright (C) 2019 Dillon Ridge Computing
+<br>
+Under the MIT License in LICENSE.txt
+
+---
+
 # Native File Dialog CMake
 
 In this fork I replaced Premake and other build system with CMake
