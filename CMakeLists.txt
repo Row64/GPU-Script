@@ -96,7 +96,7 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_subdirectory(External/glfw-3.3)
+add_subdirectory(External/glfw)
 target_link_libraries (${PROJECT_NAME} glfw)
 
 if( EXISTS "${VULKAN_SDK}" )
