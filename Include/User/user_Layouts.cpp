@@ -8,16 +8,18 @@ namespace AppCore {
 
     void LayoutManager::InitLayouts() {
 
+        cout << "------- Running LayoutManager::InitLayouts -------- " << endl;
+
         PTM.AddSUI<UnderlayUI> ( "UnderUI" );
         PTM.AddTUI<ExampleLibraryUI> ( "ExampleLib" );
 
-        // PTM.AddSUI<ParticlesSUI> ( "ParticlesShader" );
+        PTM.AddSUI<ParticlesSUI> ( "ParticlesShader" );
 
-        // PTM.AddSUI<OceanSUI> ( "OceanShader" );
-        // PTM.AddTUI<OceanTUI> ( "OceanSlider" );
+        PTM.AddSUI<OceanSUI> ( "OceanShader" );
+        PTM.AddTUI<OceanTUI> ( "OceanSlider" );
 
-        // PTM.AddSUI<IceSUI> ( "IceShader" );
-        // PTM.AddTUI<IceTUI> ( "IceSliders" );
+        PTM.AddSUI<IceSUI> ( "IceShader" );
+        PTM.AddTUI<IceTUI> ( "IceSliders" );
         
         
         // =============PaneTreeName====LazyUpdate===Name=============ParentName======WidthExp=====HeightExp===Split=======Mode====FloatX==FloatY===  
@@ -27,30 +29,30 @@ namespace AppCore {
         });
 
         
-        /*
+
         // =============PaneTreeName====LazyUpdate===Name=============ParentName======WidthExp=====HeightExp===Split=======Mode====FloatX==FloatY=== 
         PTM.AddPaneTree( "Particles Example", 1,{   {"Main",            "",              "*",        "*",        "y",        "",     "",     ""     },
                                                     {"ParticlesShader", "Main",          "*",        "*",        "y",        "",     "",     ""     }
         });
-        */
 
-        /* 
+
+        
         // =============PaneTreeName====LazyUpdate===Name=============ParentName======WidthExp=====HeightExp===Split=======Mode====FloatX==FloatY=== 
         PTM.AddPaneTree( "Ocean Example",  1,    {  {"Main",            "",              "*",        "*",        "y",        "",     "",     ""     },
                                                     {"OceanSlider",     "Main",          "",         "90",       "",        "",     "",     ""     },
                                                     {"OceanShader",     "Main",          "*",        "*",        "",        "",     "",     ""     }
         });
-        */
+        
 
-        /* 
+
         // =============PaneTreeName====LazyUpdate===Name=============ParentName======WidthExp=====HeightExp===Split=======Mode====FloatX==FloatY=== 
         PTM.AddPaneTree( "Ice Example", 1,      {   {"Main",            "",              "*",        "*",        "y",        "",     "",     ""     },
                                                     {"IceShader",       "Main",          "*",        "*",        "",         "",     "",     ""     },
                                                     {"IceSliders",      "Main",          "300",      "120",       "",        "",    "-20",  "-20"   }
         });
-        */
+        
 
-        SetCurrentLayout( "Basic Example" );      // Or you can set by index of Pane Tree:   SetCurrentLayout( 0 )
+        SetCurrentLayout( "Ice Example" );      // Or you can set by index of Pane Tree:   SetCurrentLayout( 0 )
     }
     
     void LayoutManager::InitStyles() {

@@ -152,7 +152,7 @@ These are the modifications we made to the original Shadertoy code:
 
 Before we set up the SUI Pane, we want to make sure that we set up the shared data between SUI and TUI pipelines. The `AppDataIO` is a class that globally shares data and events across the application. It's the best way to pass data between SUI and TUI Panes (in this case, the shader and the slider). Both the ice fragment shader (SUI) and the slider bars (TUI) need to access the values for roughness, expansion, color, and refraction. 
 
-The `AppDataIO` class is defined in [~/Include/Layouts/c_AppDataIO.h](../Include/Layouts/c_AppDataIO.h). There is one instance of `AppDataIO` that is created in [main.cpp](../main.cpp), and it is passed to every SUI and TUI object. 
+The `AppDataIO` class is defined in [~/Include/User/user_AppDataIO.h](../Include/User/user_AppDataIO.h). There is one instance of `AppDataIO` that is created in [main.cpp](../main.cpp), and it is passed to every SUI and TUI object. 
 
 We've put the following variables into the `AppDataIO` class definition.
 

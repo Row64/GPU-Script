@@ -33,9 +33,9 @@ endif()
 
 set(TUTORIAL ON)
 set(TUTORIAL_LIST
-	# "Tutorials/T01_Particles"
-	# "Tutorials/T02_Ocean"
-	# "Tutorials/T03_Ice"
+	"Tutorials/T01_Particles"
+	"Tutorials/T02_Ocean"
+	"Tutorials/T03_Ice"
 )
 
 #############################

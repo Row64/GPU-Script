@@ -1,5 +1,5 @@
-#ifndef C_APPDATAIO_H
-#define C_APPDATAIO_H
+#ifndef USER_APPDATAIO_H
+#define USER_APPDATAIO_H
 
 
 #include <string>
@@ -54,4 +54,4 @@ namespace AppCore {
     
 } // end namespace AppCore
 
-#endif // C_APPDATAIO_H
+#endif // USER_APPDATAIO_H

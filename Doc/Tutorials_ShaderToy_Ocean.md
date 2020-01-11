@@ -117,7 +117,7 @@ These are the modifications we made to the original Shadertoy code:
 
 The `AppDataIO` is a class that globally shares data and events across the application. It's the best way to pass data between SUI and TUI Panes (in this case, the shader and the slider). Both the ocean fragment shader (SUI) and the slider bar (TUI) need to access the rotation speed. 
 
-The `AppDataIO` class is defined in [~/Include/Layouts/c_AppDataIO.h](../Include/Layouts/c_AppDataIO.h). There is one instance of `AppDataIO` that is created in [main.cpp](../main.cpp), and it is passed to every SUI and TUI object. 
+The `AppDataIO` class is defined in [~/Include/User/user_AppDataIO.h](../Include/User/user_AppDataIO.h). There is one instance of `AppDataIO` that is created in [main.cpp](../main.cpp), and it is passed to every SUI and TUI object. 
 
 Here, we've put the variable, `OceanSpeed` into the `AppDataIO` class definition.
 
