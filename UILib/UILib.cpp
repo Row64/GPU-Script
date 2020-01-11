@@ -249,6 +249,10 @@ namespace UILib {
         const ImRect trackBB = GetGlobalBB(inX, inY, inW, inH);
         float ratio = inH / inContentH;
         float barH = round(inH * ratio);
+
+        if(barH < 10){
+            barH = 10;
+        }
         float dragH = inH - barH;
         const ImRect dragBB = GetGlobalBB(inX, inY, inW, dragH);
         const bool overTrack = GetOverState(trackBB);
@@ -294,7 +298,52 @@ namespace UILib {
         UIDrawRoundBB(barBB, sliderClr, 2);
 
     }
-    
+    void UIAddTabs(float inX, float inY, float inHeight, vector<string> inStrings, int* inIndex, float inPad, int inFontIndex){
+
+        // get the lengths for all the strings
+        float textLen = 0;
+        size_t n = inStrings.size();
+        
+        ImGuiContext& g = *GImGui;
+        PushFont(g.IO.Fonts->Fonts[inFontIndex]);
+        float xPos = inX;
+        float spacer = 7; // space between tabs
+        float hSpace = spacer * 0.5;
+
+        for(int i=0;i<n;i++){
+            
+            string idStr = "##tab" + to_string(xPos) + to_string(inY);
+            const ImGuiID id = GImGui->CurrentWindow->GetID(idStr.c_str() );
+
+            const char* charStr = inStrings[i].c_str();
+            float textWidth =  CalcTextSize(charStr).x;
+            float tabWidth = inPad * 2.0 + textWidth;
+            
+            ImRect tabBB = GetGlobalBB(xPos - hSpace, inY, tabWidth + spacer, inHeight);
+
+            const bool overTab = GetOverState(tabBB);
+            const bool active = GetActiveState(overTab, id);
+
+            if(active && *inIndex != i){
+                *inIndex = i;
+            }
+
+            int tabClr = overTab ? 0x48926b : 0x267E50;
+            int fontClr = 0xFFFFFF;
+            if(*inIndex == i){
+                tabClr = 0xf4f5f5;
+                fontClr = 0x48926b;
+            }
+
+            UIAddRoundCornerRect(xPos, inY, tabWidth, inHeight, tabClr, true, 0, 4, "0011");
+            UIAddTextString(xPos + inPad,inY,textWidth, inHeight, inStrings[i], fontClr, vec2(.5,.5));
+
+            xPos += tabWidth + spacer;
+
+        }
+        PopFont();
+
+    }
     void UIAddSliderH(float inX, float inY, float inW, float inH, float* inVal, float inMin, float inMax){   
         
         string idStr = "##sliderH" + to_string(inX) + to_string(inY);
@@ -495,7 +544,6 @@ namespace UILib {
         ImGuiWindow* window = g.CurrentWindow;
         ImDrawList* drawList = ImGui::GetWindowDrawList();
         ImVec2 wPos = window->Pos;
-
 
         ImU32 clr = UILib::Cl( inC );  
         ImVec2 p1 = ImVec2(inX + wPos.x, inY + wPos.y);

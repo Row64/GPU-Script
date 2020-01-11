@@ -36,7 +36,7 @@ using namespace glm;
 using namespace ImGui;
 
 namespace UILib {
-
+    
     // --------------------------------------------------------------------- //
     // Data Structures                                                       //
     // --------------------------------------------------------------------- //
@@ -181,29 +181,13 @@ namespace UILib {
     void                    UIAddArrowLine(float inX1, float inY1, float inX2, float inY2, unsigned int inC1, float inThickness, float inW_Arrow, float inH_Arrow);
 
 
-    // Widgets Remade From ImGUI
-    bool                    UISliderScalar(const char* label, ImGuiDataType data_type, void* v, const void* v_min, const void* v_max, const char* format = NULL, float power = 1.0f);
-    bool                    UISliderScalarN(const char* label, ImGuiDataType data_type, void* v, int components, const void* v_min, const void* v_max, const char* format = NULL, float power = 1.0f);
-    bool                    UISliderFloat(const char* label, float* v, float v_min, float v_max, const char* format = "%.3f", float power = 1.0f);     // adjust format to decorate the value with a prefix or a suffix for in-slider labels or unit display. Use power!=1.0 for power curve sliders
-    bool                    UISliderFloat2(const char* label, float v[2], float v_min, float v_max, const char* format = "%.3f", float power = 1.0f);
-    bool                    UISliderFloat3(const char* label, float v[3], float v_min, float v_max, const char* format = "%.3f", float power = 1.0f);
-    bool                    UISliderFloat4(const char* label, float v[4], float v_min, float v_max, const char* format = "%.3f", float power = 1.0f);
-    bool                    UISliderAngle(const char* label, float* v_rad, float v_degrees_min = -360.0f, float v_degrees_max = +360.0f, const char* format = "%.0f deg");
-    bool                    UISliderInt(const char* label, int* v, int v_min, int v_max, const char* format = "%d");
-    bool                    UISliderInt2(const char* label, int v[2], int v_min, int v_max, const char* format = "%d");
-    bool                    UISliderInt3(const char* label, int v[3], int v_min, int v_max, const char* format = "%d");
-    bool                    UISliderInt4(const char* label, int v[4], int v_min, int v_max, const char* format = "%d");
-    bool                    UIVSliderScalar(const char* label, const ImVec2& size, ImGuiDataType data_type, void* v, const void* v_min, const void* v_max, const char* format = NULL, float power = 1.0f);
-    bool                    UIVSliderFloat(const char* label, const ImVec2& size, float* v, float v_min, float v_max, const char* format = "%.3f", float power = 1.0f);
-    bool                    UIVSliderInt(const char* label, const ImVec2& size, int* v, int v_min, int v_max, const char* format = "%d");
-
-
     // Dynamic Widgets - Change Base On Event State
     void                    UIAddSliderH(float inX, float inY, float inW, float inH, float* inVal, float inMin, float inMax);
     void                    UIAddSliderV(float inX, float inY, float inW, float inH, float* inVal, float inMin, float inMax);
     void                    UIAddScrollerV(float inX, float inY, float inW, float inH, float inContentH, float* inVal, int* inState);
     void                    UIAddScrollerH(float inX, float inY, float inW, float inH, float inContentW, float* inVal);
-    
+    void                    UIAddTabs(float inX, float inY, float inHeight, vector<string> inStrings, int* inIndex, float inPad, int inFontIndex);
+
     // Event State
     bool                    GetOverState(ImRect inBB);
     bool                    GetActiveState(bool inOver, ImGuiID inId);
