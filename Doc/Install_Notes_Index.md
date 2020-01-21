@@ -5,6 +5,10 @@
 
 # **Install Notes** <br><br>
 
+## Clone Repository, recursive with submodules
+
+`git clone https://github.com/DillonRidgeComputing/GPU-Script.git --recursive`
+
 
 * ## [Install Notes for PC](Install_Notes_PC.md)
 * ## [Install Notes for Mac](Install_Notes_Mac.md)
