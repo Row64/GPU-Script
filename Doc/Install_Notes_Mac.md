@@ -143,8 +143,6 @@ You may see some warning during the compile process. As long as the executable b
 
 <img src="images/Install_Notes/mac_exampleapp.png" width="600">
 
-*Note: Mac Retina display is double the resolution. Mouse coordinates are currently in the wrong space. We are planning to put the transformation in a vertex shader.*
-
 -----
 
 ## **(6) Start experimenting with the API**

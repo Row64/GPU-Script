@@ -84,6 +84,7 @@ namespace AppCore {
 
         glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE);
+        glfwWindowHint(GLFW_COCOA_RETINA_FRAMEBUFFER, GLFW_FALSE);
 
         Parameters.WindowPtr = glfwCreateWindow(width,height,title, NULL, NULL);
         if( !Parameters.WindowPtr ) {
