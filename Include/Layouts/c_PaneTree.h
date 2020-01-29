@@ -45,10 +45,10 @@ namespace AppCore {
                 auto iter = Lookup.find(Nodes[i].ParentName);
                 if (iter == Lookup.end()) {
                     if(i==0){
-                        cout << "Setting Pane: " << Nodes[i].Name << " to root node" << "\n";
+                        //cout << "Setting Pane: " << Nodes[i].Name << " to root node" << "\n";
                     }
                     else{
-                        cout << "Did not find Parent Node for: " << Nodes[i].ParentName << ", setting to root node " << "\n";
+                        //cout << "Did not find Parent Node for: " << Nodes[i].ParentName << ", setting to root node " << "\n";
                     }
                     if( i > 0){
                         Nodes[i].Parent = 0;
@@ -57,7 +57,7 @@ namespace AppCore {
                 else {
                     int parentIndex = iter->second;
 
-                    cout << "map " << i << " to parent: " << parentIndex << "\n";
+                    //cout << "map " << i << " to parent: " << parentIndex << "\n";
                     Nodes[i].Parent = parentIndex;
                 } 
                 

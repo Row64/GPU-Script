@@ -137,8 +137,8 @@ namespace AppCore {
         inPT->Nodes[0].W = inWinSize->data()[0];
         inPT->Nodes[0].H = inWinSize->data()[1];
 
-        cout << "=================================================\n";
-        cout << "   **** top pane: " << inPT->Nodes[0].Name <<  " to:["<< inPT->Nodes[0].X <<", "<< inPT->Nodes[0].Y <<", "<< inPT->Nodes[0].W <<","<<inPT->Nodes[0].H <<"]\n";
+        //cout << "=================================================\n";
+        //cout << "   **** top pane: " << inPT->Nodes[0].Name <<  " to:["<< inPT->Nodes[0].X <<", "<< inPT->Nodes[0].Y <<", "<< inPT->Nodes[0].W <<","<<inPT->Nodes[0].H <<"]\n";
 
         DimensionCrawl(0, inPT);
 
@@ -232,7 +232,7 @@ namespace AppCore {
             if(!childF->Floating){
                 childF->X = newX; childF->Y = newY;
                 childF->W = newW; childF->H = newH;
-                cout << "    set node: " << childF->Name <<  " to:["<< newX <<", "<< newY <<", "<< newW <<","<<newH <<"]\n";
+                //cout << "    set node: " << childF->Name <<  " to:["<< newX <<", "<< newY <<", "<< newW <<","<<newH <<"]\n";
             }
             
             DimensionCrawl(f->Children[i], inPT);
@@ -272,7 +272,7 @@ namespace AppCore {
         if(inC->Y > yMax){inC->Y = yMax;}
         inC->Y += inP->Y;
         
-        cout << "    floating: " << inC->Name <<  " to:["<< inC->X <<", "<< inC->Y <<", "<< inC->W <<","<<inC->H <<"]\n";
+        //cout << "    floating: " << inC->Name <<  " to:["<< inC->X <<", "<< inC->Y <<", "<< inC->W <<","<<inC->H <<"]\n";
 
     }
 
