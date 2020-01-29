@@ -150,7 +150,9 @@ namespace AppCore {
         project->UpdateWindowSize( width, height );
         project->UpdateFramebufferSize( fwidth, fheight );
         project->OnWindowSizeChanged();
-        project->RenderPipelines();
+        if ( project->CanRender ) {
+            project->RenderPipelines();
+        }
     }
     void Window::ScrollEvent(GLFWwindow* window, double xoffset, double yoffset){
         WindowBase *project = reinterpret_cast<WindowBase*>(glfwGetWindowUserPointer(window));
