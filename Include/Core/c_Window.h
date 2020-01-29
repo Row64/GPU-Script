@@ -48,8 +48,7 @@ namespace AppCore {
         
         virtual void OnKeyPress( int key ) = 0;
         
-        virtual void RenderPipelines() = 0;
-        virtual bool ReadyToRender() const final;
+        virtual void RenderPipelines() = 0;\
 
         // Methods to update mouse and display data
         void UpdateMousePosition( double x, double y );

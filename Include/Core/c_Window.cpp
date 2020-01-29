@@ -15,10 +15,6 @@ namespace AppCore {
     WindowBase::~WindowBase() {
     }
 
-    bool WindowBase::ReadyToRender() const {
-        return CanRender;
-    }
-
     // Mouse
 
     void WindowBase::UpdateMousePosition( double x, double y ) {
@@ -31,7 +27,9 @@ namespace AppCore {
         if( button < 2 ) {
             InputState.Buttons[button].IsPressed = pressed;
         }
-        RenderPipelines();
+        if ( CanRender ) {
+            RenderPipelines();
+        }
     }
     
     // Display 
@@ -126,7 +124,7 @@ namespace AppCore {
             else { glfwWaitEvents(); }
             
             // Render
-            if( project.ReadyToRender() ) {
+            if( project.CanRender ) {
                 try {
                     project.RenderPipelines();
                 } catch (int except) {
