@@ -44,6 +44,7 @@ A list of available UILib functions and what they do...
 |UIAddSliderV|Vertical Slider|`void UIAddSliderV(float inX, float inY, float inW, float inH, float* inVal, float inMin, float inMax);`|
 |UIAddScrollerH|Horizontal Scroll Bar|`void UIAddScrollerH(float inX, float inY, float inW, float inH, float inContentW, float* inVal);`|
 |UIAddScrollerV|Vertical Scroll Bar|`void UIAddScrollerV(float inX, float inY, float inW, float inH, float inContentH, float* inVal, int* inState);`|
+|UIAddTabs|Horizontal Tab Bar|`UIAddTabs(float inX, float inY, float inHeight, vector<string> inStrings, int* inIndex, float inPad, int inFontIndex);`|
 
 
 
