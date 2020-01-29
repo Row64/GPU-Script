@@ -52,7 +52,7 @@ namespace AppCore {
         });
         
 
-        SetCurrentLayout( "Ice Example" );      // Or you can set by index of Pane Tree:   SetCurrentLayout( 0 )
+        SetCurrentLayout( "Basic Example" );      // Or you can set by index of Pane Tree:   SetCurrentLayout( 0 )
     }
     
     void LayoutManager::InitStyles() {
