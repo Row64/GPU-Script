@@ -56,10 +56,10 @@ namespace AppCore {
     
             frame_resources->ImageAvailableSemaphore = CreateSemaphore();
             frame_resources->FinishedRenderingSemaphore = CreateSemaphore();
-            if (GetVersion() >= 2) {
+            #if VK_HEADER_VERSION >= 131 
                 // Only create timeline sempahore if Vulkan Version is 1.2
                 frame_resources->TimelineSemaphore = CreateSemaphore( vk::SemaphoreType::eTimeline, (uint64_t) 100 );
-            }
+            #endif
             frame_resources->Fence = CreateFence( true );
             frame_resources->CommandPool = CreateCommandPool( GetGraphicsQueue().FamilyIndex, vk::CommandPoolCreateFlagBits::eResetCommandBuffer | vk::CommandPoolCreateFlagBits::eTransient );
             frame_resources->CommandBufferList.resize( LM.BufferCount );

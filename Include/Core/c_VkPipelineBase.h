@@ -122,7 +122,12 @@ namespace AppCore {
         vk::UniqueSampler                     CreateSampler( vk::SamplerMipmapMode mipmap_mode, vk::SamplerAddressMode address_mode, vk::Bool32 unnormalized_coords ) const;
         vk::UniqueRenderPass                  CreateRenderPass( std::vector<RenderPassAttachmentData> const & attachment_descriptions, std::vector<RenderPassSubpassData> const & subpass_descriptions, std::vector<vk::SubpassDependency> const & dependencies ) const;
         vk::UniquePipelineLayout              CreatePipelineLayout( std::vector<vk::DescriptorSetLayout> const & descriptor_set_layouts, std::vector<vk::PushConstantRange> const & push_constant_ranges ) const;
+        
+        #if VK_HEADER_VERSION >= 131 
         vk::UniqueSemaphore                   CreateSemaphore( vk::SemaphoreType inType = vk::SemaphoreType::eBinary, uint64_t inValue = 0 ) const;
+        #else
+        vk::UniqueSemaphore                   CreateSemaphore() const;
+        #endif
         vk::UniqueFence                       CreateFence( bool signaled ) const;
         vk::UniqueCommandPool                 CreateCommandPool( uint32_t queue_family_index, vk::CommandPoolCreateFlags flags ) const;
         std::vector<vk::UniqueCommandBuffer>  AllocateCommandBuffers( vk::CommandPool const & pool, vk::CommandBufferLevel level, uint32_t count ) const;

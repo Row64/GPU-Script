@@ -40,6 +40,11 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, 
 }
 // END FOR DEBUGGING ------------------------------------------------------------------------------------------------------------------ //
 
+#if VK_HEADER_VERSION >= 131 
+    #define VULKAN_VERSION_2
+#elif VK_HEADER_VERSION >= 68
+    #define VULKAN_VERSION_1
+#endif
 
 namespace AppCore {
 
@@ -51,9 +56,12 @@ namespace AppCore {
 
     void VulkanBase::InitVulkan( WindowParameters window ) {
         
-        if ( (int) VK_HEADER_VERSION >= 131 ) { Vulkan.Version = VK_MAKE_VERSION( 1, 2, 0 ); }
-        else if ( (int) VK_HEADER_VERSION >= 68 ) { Vulkan.Version = VK_MAKE_VERSION( 1, 1, 0 ); }
-        
+        #if VK_HEADER_VERSION >= 131 
+            Vulkan.Version = VK_MAKE_VERSION( 1, 2, 0 );
+        #elif VK_HEADER_VERSION >= 68
+            Vulkan.Version = VK_MAKE_VERSION( 1, 1, 0 );
+        #endif
+
         Window = window;
 
         CheckVulkanLibrary();

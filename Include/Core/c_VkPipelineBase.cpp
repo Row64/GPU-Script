@@ -213,6 +213,7 @@ namespace AppCore {
         return GetDevice().createPipelineLayoutUnique( layout_create_info );
         }
 
+#if VK_HEADER_VERSION >= 131 
     vk::UniqueSemaphore VkPipelineBase::CreateSemaphore( vk::SemaphoreType inType, uint64_t inValue ) const {
         
         if ( inType == vk::SemaphoreType::eBinary ) {
@@ -228,6 +229,11 @@ namespace AppCore {
         return GetDevice().createSemaphoreUnique( create_info );
         
     }
+#else
+    vk::UniqueSemaphore VkPipelineBase::CreateSemaphore() const {
+        return GetDevice().createSemaphoreUnique( {} );
+    }
+#endif
 
     vk::UniqueFence VkPipelineBase::CreateFence( bool signaled) const {
         return GetDevice().createFenceUnique( { signaled ? vk::FenceCreateFlagBits::eSignaled : vk::FenceCreateFlags( 0u ) } );
