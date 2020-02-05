@@ -238,10 +238,16 @@ namespace AppCore {
         uint32_t selected_present_queue_family_index = UINT32_MAX;
 
         // Physical device extensions we want to use
+        #if VK_HEADER_VERSION >= 131 
         std::vector<const char*> extensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME,
             VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME
         };
+        #else
+        std::vector<const char*> extensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+        #endif
 
         for( auto & physical_device : physical_devices ) {
             if( CheckPhysicalDeviceProperties( physical_device, extensions, selected_graphics_queue_family_index, selected_present_queue_family_index ) ) {
@@ -281,11 +287,6 @@ namespace AppCore {
                 queue_priorities.data()                         // const float                 *pQueuePriorities
             );
         }
-
-        // Enable the timeline feature in the physical device by adding it to the pNext element of PhysicalDeviceFeatures2
-        vk::PhysicalDeviceFeatures2 device_features = Vulkan.PhysicalDevice.getFeatures2();
-        vk::PhysicalDeviceTimelineSemaphoreFeatures timeline_feature(VK_TRUE);
-        device_features.setPNext( &timeline_feature );
         
         vk::DeviceCreateInfo device_create_info(
             vk::DeviceCreateFlags( 0 ),                       // VkDeviceCreateFlags                flags
@@ -297,8 +298,15 @@ namespace AppCore {
             extensions.data(),                                // const char * const                *ppEnabledExtensionNames
             nullptr                                           // const VkPhysicalDeviceFeatures    *pEnabledFeatures
         );
-        device_create_info.setPNext( &device_features );      // PhysicalDeviceFeatures2 added to the pNext element of DeviceCreateInfo
 
+        #if VK_HEADER_VERSION >= 131
+        // Enable the timeline feature in the physical device by adding it to the pNext element of PhysicalDeviceFeatures2
+        vk::PhysicalDeviceFeatures2 device_features = Vulkan.PhysicalDevice.getFeatures2();
+        vk::PhysicalDeviceTimelineSemaphoreFeatures timeline_feature(VK_TRUE);
+        device_features.setPNext( &timeline_feature );
+        device_create_info.setPNext( &device_features );      // PhysicalDeviceFeatures2 added to the pNext element of DeviceCreateInfo
+        #endif
+        
         Vulkan.Device = Vulkan.PhysicalDevice.createDeviceUnique( device_create_info );
         Vulkan.GraphicsQueue.FamilyIndex = selected_graphics_queue_family_index;
         Vulkan.PresentQueue.FamilyIndex = selected_present_queue_family_index;
