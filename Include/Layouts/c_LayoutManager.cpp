@@ -27,15 +27,15 @@ namespace AppCore {
     void LayoutManager::ValidateLayouts() {
 
         if ( BufferCount < 2 ) {
-            std::cout << "Assert: BufferCount must be greater than 1." << std::endl;
+            std::cout << "Assert: BufferCount must be greater than 1. Please set it in c_LayoutManager.h." << std::endl;
             assert( BufferCount > 1);
         }
 
         for ( auto & pt : PTM.GetAllPaneTrees() ) {
             int SUICount = (int) PTM.GetSUIVector( pt ).size();
-            if ( SUICount > 1 ) {
-                std::cout << "Assert: Error in " << pt->Name << " layout. Only 1 SUI Pipeline per layout is currently allowed. It is on our TO DO to allow more in the future." << std::endl;
-                assert( SUICount <= 1 );
+            if ( SUICount < 1 ) {
+                std::cout << "Assert: Error in " << pt->Name << " layout. You must have at least 1 SUI pane." << std::endl;
+                assert( SUICount >= 1 );
             }
             if ( SUICount + 1 > BufferCount ) {
                 std::cout<< "Assert: Error in " << pt->Name << " layout. Not enough command buffers allocated for rendering." << std::endl;
@@ -64,6 +64,13 @@ namespace AppCore {
         PTM.GetDimensions( CurrentLayout , &window_size );
         PTM.UpdateDimensions( CurrentLayout );
         PTM.UpdateModes(  CurrentLayout );
+        
+        // Update Render Pass Settings for SUI
+        // No need to update TUI render pass setting, because TUI is always at the end
+        int SUICount = (int) CurrentSUI.size();
+        for ( int i = 0; i < SUICount; ++i ) {
+            CurrentSUI[i]->ReInit( i );
+        }
     }
 
     void LayoutManager::Render( CurrentFrameData & current_frame ) {
@@ -71,7 +78,7 @@ namespace AppCore {
         // SUI Pipelines
         int SUICount = (int) CurrentSUI.size();
         for ( int i = 0; i < SUICount; ++i ) {
-            CurrentSUI[i]->Render( current_frame, *current_frame.FrameResources->CommandBufferList[i] );
+            CurrentSUI[i]->Render( current_frame, *current_frame.FrameResources->CommandBufferList[i], i );
         }
 
         // TUI pipeline
@@ -97,9 +104,7 @@ namespace AppCore {
 
         // SUI pipelines
         int SUICount = (int) CurrentSUI.size();
-        for ( int i = 0; i < SUICount; ++i ) {
-            CurrentSUI[i]->OnWindowSizeChanged_Post();
-        }
+        CurrentSUI[0]->OnWindowSizeChanged_Post();
 
         // TUI pipeline
         PTM.GetTUIPipeline().OnWindowSizeChanged_Post();   

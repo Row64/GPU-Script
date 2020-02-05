@@ -27,7 +27,7 @@ namespace AppCore {
         void                    SetCurrentLayout( int inIndex );
         void                    UpdateCurrentLayout();
 
-        int                     BufferCount = 2;    // Set max number of command buffers needed.
+        int                     BufferCount = 3;    // Set max number of command buffers needed.
         void                    InitStyles();
         void                    InitLayouts();      // Add your layouts here
         

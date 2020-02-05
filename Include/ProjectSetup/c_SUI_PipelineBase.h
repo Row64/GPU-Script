@@ -98,8 +98,9 @@ namespace AppCore {
         SUI_PipelineBase( PipelineManager &parent );
         virtual ~SUI_PipelineBase();
 
-        void                    Init( size_t resource_count );
-        virtual void            Render( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer );
+        void                    Init( size_t resource_count);
+        virtual void            ReInit( int render_order );
+        virtual void            Render( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer, int render_order );
 
         virtual void            OnWindowSizeChanged_Pre();
         virtual void            OnWindowSizeChanged_Post();
@@ -129,16 +130,16 @@ namespace AppCore {
         virtual void            CreateVertexBuffer();
         virtual void            CreateIndexBuffer();
         virtual void            CreateDescriptorSet();
-        virtual void            CreateRenderPasses();
+        virtual void            CreateRenderPasses(int render_order=0);
         virtual void            CreatePipelineLayout();
         virtual void            CreateGraphicsPipeline();
         virtual void            SubmitComplete();
         
         // Render methods
-        virtual void            AcquireImage( CurrentFrameData & current_frame );
+        virtual void            CreateCurrentFrameBuffer( CurrentFrameData & current_frame );
         virtual void            UpdateUniformBuffer( SUI_PipelineData::DrawResourcesData & drawing_resources );
         virtual void            RecordCommandBuffer( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer );
-        virtual void            SubmitCommandBuffer( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer );
+        virtual void            SubmitCommandBuffer( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer, int render_order );
 
         virtual vk::Rect2D      SetScissor();
         

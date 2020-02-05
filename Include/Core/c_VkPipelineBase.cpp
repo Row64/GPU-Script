@@ -213,8 +213,20 @@ namespace AppCore {
         return GetDevice().createPipelineLayoutUnique( layout_create_info );
         }
 
-    vk::UniqueSemaphore VkPipelineBase::CreateSemaphore() const {
-        return GetDevice().createSemaphoreUnique( {} );
+    vk::UniqueSemaphore VkPipelineBase::CreateSemaphore( vk::SemaphoreType inType, uint64_t inValue ) const {
+        
+        if ( inType == vk::SemaphoreType::eBinary ) {
+            return GetDevice().createSemaphoreUnique( {} );
+        }
+
+        vk::SemaphoreTypeCreateInfo type_create_info(
+            inType,                                                 // VkSemaphoreType              semaphoreType;
+            inValue                                                 // uint64_t                     initialValue;
+        );
+        vk::SemaphoreCreateInfo create_info;
+        create_info.pNext = &type_create_info;
+        return GetDevice().createSemaphoreUnique( create_info );
+        
     }
 
     vk::UniqueFence VkPipelineBase::CreateFence( bool signaled) const {

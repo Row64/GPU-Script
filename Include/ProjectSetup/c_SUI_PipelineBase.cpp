@@ -30,20 +30,24 @@ namespace AppCore {
         
         
     }
-    void SUI_PipelineBase::Render( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer ) {
 
-        // Acquire swap chain image and create frame buffer
-        AcquireImage( current_frame );
+    void SUI_PipelineBase::ReInit( int render_order ) {
+        CreateRenderPasses( render_order );
+    }
 
+    void SUI_PipelineBase::Render( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer, int render_order ) {
+
+        if ( render_order == 0 ) { CreateCurrentFrameBuffer( current_frame ); }
         UpdateUniformBuffer( Parameters.DrawingResources[current_frame.ResourceIndex] );
 
         // Record command buffers
         RecordCommandBuffer( current_frame, command_buffer );
-        SubmitCommandBuffer( current_frame, command_buffer );
+        SubmitCommandBuffer( current_frame, command_buffer, render_order );
 
         SubmitComplete();
         
     }
+
     void SUI_PipelineBase::OnWindowSizeChanged_Pre() {
     }
 
@@ -211,7 +215,7 @@ namespace AppCore {
 
     }
 
-    void SUI_PipelineBase::CreateRenderPasses() {
+    void SUI_PipelineBase::CreateRenderPasses(int render_order) {
         std::vector<RenderPassSubpassData> subpass_descriptions = {
             {
                 {},                                                         // std::vector<VkAttachmentReference> const  &InputAttachments
@@ -249,9 +253,9 @@ namespace AppCore {
             }
         };
         
-        // Render pass - from present_src to color_attachment
-        {
-            std::vector<RenderPassAttachmentData> attachment_descriptions = {
+        std::vector<RenderPassAttachmentData> attachment_descriptions;
+        if (render_order == 0) {
+            attachment_descriptions = {
                 {
                     Parent.GetSwapChain().Format,                             // VkFormat                       format
                     vk::AttachmentLoadOp::eClear,                             // VkAttachmentLoadOp             loadOp
@@ -267,8 +271,25 @@ namespace AppCore {
                     vk::ImageLayout::eDepthStencilAttachmentOptimal           // VkImageLayout                  finalLayout
                 }
             };
-            Parameters.RenderPass = Parent.CreateRenderPass( attachment_descriptions, subpass_descriptions, dependencies );
+        } else {
+            attachment_descriptions = {
+                {
+                    Parent.GetSwapChain().Format,                             // VkFormat                       format
+                    vk::AttachmentLoadOp::eLoad,                              // VkAttachmentLoadOp             loadOp
+                    vk::AttachmentStoreOp::eStore,                            // VkAttachmentStoreOp            storeOp
+                    vk::ImageLayout::eColorAttachmentOptimal,                 // VkImageLayout                  initialLayout
+                    vk::ImageLayout::eColorAttachmentOptimal                  // VkImageLayout                  finalLayout
+                },
+                {
+                    Parent.DefaultDepthFormat,                                // VkFormat                       format
+                    vk::AttachmentLoadOp::eLoad,                              // VkAttachmentLoadOp             loadOp
+                    vk::AttachmentStoreOp::eStore,                            // VkAttachmentStoreOp            storeOp
+                    vk::ImageLayout::eDepthStencilAttachmentOptimal,          // VkImageLayout                  initialLayout
+                    vk::ImageLayout::eDepthStencilAttachmentOptimal           // VkImageLayout                  finalLayout
+                }
+            };
         }
+        Parameters.RenderPass = Parent.CreateRenderPass( attachment_descriptions, subpass_descriptions, dependencies );
 
     }
 
@@ -454,22 +475,9 @@ namespace AppCore {
     
     // Render Methods
 
-    void SUI_PipelineBase::AcquireImage( CurrentFrameData & current_frame ) {
-
-        // Acquire swapchain image
-        switch (Parent.GetDevice().acquireNextImageKHR( *current_frame.Swapchain->Handle, 3000000000, *current_frame.FrameResources->ImageAvailableSemaphore, vk::Fence(), &current_frame.SwapchainImageIndex )) {
-            case vk::Result::eSuccess:
-            case vk::Result::eSuboptimalKHR:
-                break;
-            case vk::Result::eErrorOutOfDateKHR:
-                Parent.OnWindowSizeChanged();
-                break;
-            default:
-                throw std::runtime_error( "Could not acquire swapchain image!" );
-        }
+    void SUI_PipelineBase::CreateCurrentFrameBuffer( CurrentFrameData & current_frame ) {
         // Create a framebuffer for current frame
         current_frame.FrameResources->Framebuffer = Parent.CreateFramebuffer( { *current_frame.Swapchain->ImageViews[current_frame.SwapchainImageIndex], *current_frame.FrameResources->DepthAttachment.View }, current_frame.Swapchain->Extent, *Parameters.RenderPass );
-        
     }
 
     void SUI_PipelineBase::UpdateUniformBuffer( SUI_PipelineData::DrawResourcesData & drawing_resources ) {
@@ -555,16 +563,31 @@ namespace AppCore {
 
     }
 
-    void SUI_PipelineBase::SubmitCommandBuffer( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer ) {
+    void SUI_PipelineBase::SubmitCommandBuffer( CurrentFrameData & current_frame, vk::CommandBuffer & command_buffer, int render_order ) { 
         vk::PipelineStageFlags wait_dst_stage_mask = vk::PipelineStageFlagBits::eColorAttachmentOutput;  
-        vk::SubmitInfo submit_info(
-            1,                                                          // uint32_t                       waitSemaphoreCount
-            &(*current_frame.FrameResources->ImageAvailableSemaphore),  // const VkSemaphore             *pWaitSemaphores
-            &wait_dst_stage_mask,                                       // const VkPipelineStageFlags    *pWaitDstStageMask
-            1,                                                          // uint32_t                       commandBufferCount;
-            &command_buffer                                             // const VkCommandBuffer         *pCommandBuffers
-        );
-        Parent.GetGraphicsQueue().Handle.submit( { submit_info }, vk::Fence() );
+        if ( render_order == 0 ) { 
+            vk::SubmitInfo submit_info(
+                1,                                                          // uint32_t                       waitSemaphoreCount
+                &(*current_frame.FrameResources->ImageAvailableSemaphore),  // const VkSemaphore             *pWaitSemaphores
+                &wait_dst_stage_mask,                                       // const VkPipelineStageFlags    *pWaitDstStageMask
+                1,                                                          // uint32_t                       commandBufferCount;
+                &command_buffer                                             // const VkCommandBuffer         *pCommandBuffers
+                                                                            // uint32_t                       signalSemaphoreCount
+                                                                            // const VkSemaphore             *pSignalSemaphores
+            );
+            Parent.GetGraphicsQueue().Handle.submit( { submit_info }, vk::Fence() );
+        } else {
+            vk::SubmitInfo submit_info(
+                0,                                                          // uint32_t                     waitSemaphoreCount
+                nullptr,                                                    // const VkSemaphore           *pWaitSemaphores
+                &wait_dst_stage_mask,                                       // const VkPipelineStageFlags    *pWaitDstStageMask
+                1,                                                          // uint32_t                       commandBufferCount;
+                &command_buffer                                             // const VkCommandBuffer         *pCommandBuffers
+                                                                            // uint32_t                       signalSemaphoreCount
+                                                                            // const VkSemaphore             *pSignalSemaphores
+            );
+            Parent.GetGraphicsQueue().Handle.submit( { submit_info }, vk::Fence() );
+        }
     }
 
     void SUI_PipelineBase::SubmitComplete(){

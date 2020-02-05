@@ -47,6 +47,7 @@ namespace AppCore {
     }
 
     void PipelineManager::CreateFrameResources() {
+        std::cout << "--- PipelineManager::CreateFrameResources     Creating " << FrameResources.size() << " Frame Resources" << std::endl;
 
         for( size_t i = 0; i < FrameResources.size(); ++i ) {
             
@@ -55,12 +56,14 @@ namespace AppCore {
     
             frame_resources->ImageAvailableSemaphore = CreateSemaphore();
             frame_resources->FinishedRenderingSemaphore = CreateSemaphore();
+            if (GetVersion() >= 2) {
+                // Only create timeline sempahore if Vulkan Version is 1.2
+                frame_resources->TimelineSemaphore = CreateSemaphore( vk::SemaphoreType::eTimeline, (uint64_t) 100 );
+            }
             frame_resources->Fence = CreateFence( true );
             frame_resources->CommandPool = CreateCommandPool( GetGraphicsQueue().FamilyIndex, vk::CommandPoolCreateFlagBits::eResetCommandBuffer | vk::CommandPoolCreateFlagBits::eTransient );
-
             frame_resources->CommandBufferList.resize( LM.BufferCount );
             for ( int i = 0; i < frame_resources->CommandBufferList.size(); ++i ) {
-                    std::cout << "Creating CommandBuffer: " << i << std::endl;
                     frame_resources->CommandBufferList[i] = std::move( AllocateCommandBuffers( *frame_resources->CommandPool, vk::CommandBufferLevel::ePrimary, 1 )[0] );
             }
             
@@ -188,6 +191,9 @@ namespace AppCore {
         // Start Frame
         StartFrame( current_frame );
 
+        // Acquire swap chain image and create frame buffer
+        AcquireImage( current_frame );
+
         // Render Shader-Driven and UILib-Driven Pipelines
         LM.Render( current_frame );
 
@@ -209,6 +215,19 @@ namespace AppCore {
 
     }
 
+    void PipelineManager::AcquireImage( CurrentFrameData & current_frame ) {
+        // Acquire swapchain image and signal ImageAvailableSemaphore
+        switch (GetDevice().acquireNextImageKHR( *current_frame.Swapchain->Handle, 3000000000, *current_frame.FrameResources->ImageAvailableSemaphore, vk::Fence(), &current_frame.SwapchainImageIndex )) {
+            case vk::Result::eSuccess:
+            case vk::Result::eSuboptimalKHR:
+                break;
+            case vk::Result::eErrorOutOfDateKHR:
+                OnWindowSizeChanged();
+                break;
+            default:
+                throw std::runtime_error( "Could not acquire swapchain image!" );
+        }
+    }
 
     void PipelineManager::FinishFrame( CurrentFrameData & current_frame ) {
 
@@ -233,7 +252,6 @@ namespace AppCore {
             default:
                 throw std::runtime_error( "Could not present swapchain image!" );
         }
-
     }
 
     void PipelineManager::OnWindowSizeChanged_Pre() {

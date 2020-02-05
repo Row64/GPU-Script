@@ -56,7 +56,6 @@ namespace AppCore {
                 }
                 else {
                     int parentIndex = iter->second;
-
                     //cout << "map " << i << " to parent: " << parentIndex << "\n";
                     Nodes[i].Parent = parentIndex;
                 } 

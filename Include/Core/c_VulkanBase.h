@@ -138,7 +138,7 @@ namespace AppCore {
     // General Vulkan parameters' container class                   //
     // ************************************************************ //
     struct VulkanBaseParameters {
-        //vk::UniqueInstance            Instance;
+        uint32_t                      Version;
         vk::Instance                  Instance;
         vk::PhysicalDevice            PhysicalDevice;
         std::string                   PhysicalDeviceName;
@@ -149,6 +149,7 @@ namespace AppCore {
         SwapChainParameters           SwapChain;
 
         VulkanBaseParameters() :
+            Version( VK_MAKE_VERSION( 1, 0, 0 ) ),
             Instance(),
             PhysicalDevice(),
             Device(),
@@ -173,7 +174,7 @@ namespace AppCore {
         VulkanBase();
         virtual ~VulkanBase();
 
-        void                            InitVulkan( WindowParameters window, uint32_t version = VK_MAKE_VERSION( 1, 0, 0 ) );
+        void                            InitVulkan( WindowParameters window );
 
         // Overrided methods
         virtual void                    OnWindowSizeChanged() final override;           // Overrided from WindowBase
@@ -186,6 +187,7 @@ namespace AppCore {
         QueueParameters const &         GetPresentQueue() const;
         vk::SurfaceKHR const &          GetPresentationSurface() const;
         SwapChainParameters const &     GetSwapChain() const;
+        int                             GetVersion();
 
         // FOR DEBUG
         vk::UniqueDebugUtilsMessengerEXT    DebugUtilsMessenger;
@@ -194,7 +196,6 @@ namespace AppCore {
     protected:
 
         void                            CreateSwapChain( vk::PresentModeKHR const selected_present_mode = vk::PresentModeKHR::eMailbox, vk::ImageUsageFlags const selected_usage = vk::ImageUsageFlagBits::eColorAttachment, uint32_t const selected_image_count = 3 );
-
 
     private:
 
@@ -205,7 +206,7 @@ namespace AppCore {
         void                            CreateInstance( uint32_t version );
         void                            CreatePresentationSurface();
         void                            CreateDevice( uint32_t version );
-        bool                            CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, uint32_t & graphics_queue_family_index, uint32_t & present_queue_family_index );
+        bool                            CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, std::vector<const char*> device_extensions, uint32_t & graphics_queue_family_index, uint32_t & present_queue_family_index );
         void                            GetDeviceQueue();
         void                            CreateSwapChainImageViews();
 

@@ -44,6 +44,7 @@ namespace AppCore {
         // Drawing methods
 
         void                        StartFrame( CurrentFrameData & current_frame );
+        void                        AcquireImage( CurrentFrameData & current_frame );
         void                        FinishFrame( CurrentFrameData & current_frame );
 
         void                        OnWindowSizeChanged_Pre() final override;
