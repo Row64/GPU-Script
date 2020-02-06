@@ -39,6 +39,13 @@ Run the installer executable. You don't have to install the full Visual Studio C
 
 *Please check [GPU Script - Vulkan Version Compatibility](Vulkan_Compatibility.md) before installing Vulkan.*
 
+**If you plan to install Vulkan 1.2, check with your GPU hardware vender to see whether they have a driver that supports it.**
+
+>The LunarG SDK for Vulkan 1.2 currently does not include a Vulkan driver. You will need to check with your GPU hardware vendor for a Vulkan Installable Client Driver (ICD). The SDK will allow you to build Vulkan applications but you will need a Vulkan ICD to execute them. 
+>* [NVIDIA Drivers](https://developer.nvidia.com/vulkan-driver) (Version 440.99 supports Vulkan 1.2)
+>* [AMD Drivers](https://gpuopen.com/vulkan-1-2-driver-available-latest-radeon-software-adrenalin-2020-edition-20-1-2/)
+>* [Intel Drivers](https://downloadcenter.intel.com/product/80939/Graphics-Drivers) (Version 26.20.100.7755 supports Vulkan 1.2)
+
 ### Download the installer for the LunarG VulkanSDK from here:
 
 [https://vulkan.lunarg.com/sdk/home](https://vulkan.lunarg.com/sdk/home)

@@ -40,6 +40,11 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, 
 }
 // END FOR DEBUGGING ------------------------------------------------------------------------------------------------------------------ //
 
+#if VK_HEADER_VERSION >= 131 
+    #define VULKAN_VERSION_2
+#elif VK_HEADER_VERSION >= 68
+    #define VULKAN_VERSION_1
+#endif
 
 namespace AppCore {
 
@@ -49,15 +54,20 @@ namespace AppCore {
         Window() {
     }
 
-    void VulkanBase::InitVulkan( WindowParameters window, uint32_t version ) {
-        std::cout << "VK_HEADER_VERSION: " << VK_HEADER_VERSION << std::endl;
+    void VulkanBase::InitVulkan( WindowParameters window ) {
         
+        #if VK_HEADER_VERSION >= 131 
+            Vulkan.Version = VK_MAKE_VERSION( 1, 2, 0 );
+        #elif VK_HEADER_VERSION >= 68
+            Vulkan.Version = VK_MAKE_VERSION( 1, 1, 0 );
+        #endif
+
         Window = window;
 
         CheckVulkanLibrary();
-        CreateInstance( version );
+        CreateInstance( Vulkan.Version );
         CreatePresentationSurface();
-        CreateDevice( version );
+        CreateDevice( Vulkan.Version );
         GetDeviceQueue();
         CreateSwapChain();
     }
@@ -111,30 +121,44 @@ namespace AppCore {
         }
     }
 
+    int VulkanBase::GetVersion() {
+        return (int) VK_VERSION_MINOR( Vulkan.Version );
+    }
+
 
     void VulkanBase::CreateInstance( uint32_t version ) {
 
         auto available_extensions = vk::enumerateInstanceExtensionProperties();
-        std::vector<const char*> extensions = GetRequiredExtensions();
 
+        // Uncomment to list available instance extensions
+        // for( size_t i = 0; i < available_extensions.size(); ++i ) {
+        //     std::cout << "--- VulkanBase::CreateInstance     Available extensions: " << available_extensions[i].extensionName << std::endl;
+        // }
+
+        std::vector<const char*> extensions = GetRequiredExtensions();                      // Extensions from GLFW
         for( size_t i = 0; i < extensions.size(); ++i ) {
             if( !CheckExtensionAvailability( extensions[i], available_extensions ) ) {
                 throw std::runtime_error( std::string( "Could not find instance extension named \"" + std::string( extensions[i] ) + "\"!" ).c_str() );
             }
         }
 
-        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);        // FOR DEBUG PURPOSES
+        extensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);                            // Extensions for debug purposes
+
+        // Uncomment to list instance extensions enabled
+        // for( size_t i = 0; i < extensions.size(); ++i ) {
+        //     std::cout << "--- VulkanBase::CreateInstance     Extension Loaded: " << extensions[i] << std::endl;
+        // };
 
         std::vector<const char*> validation_layers = {
             "VK_LAYER_LUNARG_standard_validation",
             "VK_LAYER_KHRONOS_validation"
             // "VK_LAYER_LUNARG_api_dump"
         };
-
+    
         vk::ApplicationInfo application_info(
-            "AppCore",                                      // const char                *pApplicationName
+            "AppCore",                                            // const char                *pApplicationName
             VK_MAKE_VERSION( 1, 0, 0 ),                           // uint32_t                   applicationVersion
-            "AppCore Engine",                               // const char                *pEngineName
+            "AppCore Engine",                                     // const char                *pEngineName
             VK_MAKE_VERSION( 1, 0, 0 ),                           // uint32_t                   engineVersion
             version                                               // uint32_t                   apiVersion
         );
@@ -148,25 +172,27 @@ namespace AppCore {
             extensions.data()                                     // const char * const        *ppEnabledExtensionNames
         );
 
-        //Vulkan.Instance = vk::createInstanceUnique( instance_create_info );
         Vulkan.Instance = vk::createInstance( instance_create_info );
+        std::cout << "--- VulkanBase::CreateInstance    Created Vulkan Instance " << std::endl;
 
-        std::cout << "--- VulkanBase::CreateInstance     Created Vulkan Instance" << std::endl;
+        uint32_t instance_version = vk::enumerateInstanceVersion();
+        uint32_t major_version = VK_VERSION_MAJOR( instance_version );
+        uint32_t minor_version = VK_VERSION_MINOR( instance_version );
+        uint32_t patch_version = VK_VERSION_PATCH( instance_version );
+        std::cout << "--- VulkanBase::CreateInstance    Instance Version " << major_version << " " << minor_version << " " << patch_version << std::endl;
 
         // FOR DEBUG
         static bool initialized = false;
         if (!initialized) {
             pfnVkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(Vulkan.Instance.getProcAddr("vkCreateDebugUtilsMessengerEXT"));
             pfnVkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(Vulkan.Instance.getProcAddr("vkDestroyDebugUtilsMessengerEXT"));
-            std::cout << "--- VulkanBase::CreateInstance     Got to here 1" << std::endl;
             assert(pfnVkCreateDebugUtilsMessengerEXT && pfnVkDestroyDebugUtilsMessengerEXT);
-            std::cout << "--- VulkanBase::CreateInstance     Got to here 2" << std::endl;
             initialized = true;
         }
 
         DebugUtilsMessenger = CreateDebugUtilsMessenger( Vulkan.Instance );
 
-        std::cout << "--- VulkanBase::CreateInstance     Enabled Debug Extension" << std::endl;
+        std::cout << "--- VulkanBase::CreateInstance    Enabled Debug Extension" << std::endl;
 
     }
 
@@ -206,15 +232,36 @@ namespace AppCore {
 
     void VulkanBase::CreateDevice( uint32_t version ) {
 
-        //auto physical_devices = Vulkan.Instance->enumeratePhysicalDevices();
         auto physical_devices = Vulkan.Instance.enumeratePhysicalDevices();
 
         uint32_t selected_graphics_queue_family_index = UINT32_MAX;
         uint32_t selected_present_queue_family_index = UINT32_MAX;
 
+        // Physical device extensions we want to use
+        #if VK_HEADER_VERSION >= 131 
+        std::vector<const char*> extensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME,
+            VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME
+        };
+        #else
+        std::vector<const char*> extensions = {
+            VK_KHR_SWAPCHAIN_EXTENSION_NAME
+        };
+        #endif
+
         for( auto & physical_device : physical_devices ) {
-            if( CheckPhysicalDeviceProperties( physical_device, selected_graphics_queue_family_index, selected_present_queue_family_index ) ) {
+            if( CheckPhysicalDeviceProperties( physical_device, extensions, selected_graphics_queue_family_index, selected_present_queue_family_index ) ) {
                 Vulkan.PhysicalDevice = physical_device;
+                vk::PhysicalDeviceProperties device_properties = physical_device.getProperties();
+                Vulkan.PhysicalDeviceName = device_properties.deviceName;
+                std::cout << "--- VulkanBase::CreateDevice     Selected Physical Device: " << Vulkan.PhysicalDeviceName << std::endl;
+
+                // Uncomment to show the highest version API supported by the physical device
+                // uint32_t major_version = VK_VERSION_MAJOR( device_properties.apiVersion );
+                // uint32_t minor_version = VK_VERSION_MINOR( device_properties.apiVersion );
+                // uint32_t patch_version = VK_VERSION_PATCH( device_properties.apiVersion );
+                // std::cout << "--- VulkanBase::CreateDevice     Physical Device Supported API: " << major_version << " " << minor_version << " " << patch_version << std::endl;
+                
                 break;
             }
         }
@@ -240,11 +287,7 @@ namespace AppCore {
                 queue_priorities.data()                         // const float                 *pQueuePriorities
             );
         }
-
-        std::vector<const char*> extensions = {
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME
-        };
-
+        
         vk::DeviceCreateInfo device_create_info(
             vk::DeviceCreateFlags( 0 ),                       // VkDeviceCreateFlags                flags
             static_cast<uint32_t>(queue_create_infos.size()), // uint32_t                           queueCreateInfoCount
@@ -256,6 +299,14 @@ namespace AppCore {
             nullptr                                           // const VkPhysicalDeviceFeatures    *pEnabledFeatures
         );
 
+        #if VK_HEADER_VERSION >= 131
+        // Enable the timeline feature in the physical device by adding it to the pNext element of PhysicalDeviceFeatures2
+        vk::PhysicalDeviceFeatures2 device_features = Vulkan.PhysicalDevice.getFeatures2();
+        vk::PhysicalDeviceTimelineSemaphoreFeatures timeline_feature(VK_TRUE);
+        device_features.setPNext( &timeline_feature );
+        device_create_info.setPNext( &device_features );      // PhysicalDeviceFeatures2 added to the pNext element of DeviceCreateInfo
+        #endif
+        
         Vulkan.Device = Vulkan.PhysicalDevice.createDeviceUnique( device_create_info );
         Vulkan.GraphicsQueue.FamilyIndex = selected_graphics_queue_family_index;
         Vulkan.PresentQueue.FamilyIndex = selected_present_queue_family_index;
@@ -264,17 +315,11 @@ namespace AppCore {
     }
 
 
-    bool VulkanBase::CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, uint32_t & selected_graphics_queue_family_index, uint32_t & selected_present_queue_family_index ) {
+    bool VulkanBase::CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, std::vector<const char*> device_extensions, uint32_t & selected_graphics_queue_family_index, uint32_t & selected_present_queue_family_index ) {
 
         auto available_extensions = physical_device.enumerateDeviceExtensionProperties();
 
         vk::PhysicalDeviceProperties device_properties = physical_device.getProperties();
-        vk::PhysicalDeviceFeatures   device_features = physical_device.getFeatures();
-        Vulkan.PhysicalDeviceName = device_properties.deviceName;
-
-        std::vector<const char*> device_extensions = {
-            VK_KHR_SWAPCHAIN_EXTENSION_NAME
-        };
 
         for( size_t i = 0; i < device_extensions.size(); ++i ) {
             if( !CheckExtensionAvailability( device_extensions[i], available_extensions ) ) {
@@ -333,9 +378,7 @@ namespace AppCore {
 
     void VulkanBase::GetDeviceQueue() {
         Vulkan.GraphicsQueue.Handle = Vulkan.Device->getQueue( Vulkan.GraphicsQueue.FamilyIndex, 0 );
-        Vulkan.PresentQueue.Handle = Vulkan.Device->getQueue( Vulkan.PresentQueue.FamilyIndex, 0 );
-        
-        std::cout << "--- VulkanBase::GetDeviceQueue     Got Vulkan Device Queues" << std::endl;        
+        Vulkan.PresentQueue.Handle = Vulkan.Device->getQueue( Vulkan.PresentQueue.FamilyIndex, 0 );     
     }
 
 
@@ -481,21 +524,21 @@ namespace AppCore {
 
     vk::ImageUsageFlags VulkanBase::GetSwapChainUsageFlags( vk::SurfaceCapabilitiesKHR const & surface_capabilities, vk::ImageUsageFlags const selected_usage ) const {
 
-        // Print out suported usage flags
-        static bool initialized = false;
-        if ( initialized == false ) {
-            std::cout << "Supported swap chain's image usages include:\n"
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eTransferSrc             ? "    VK_IMAGE_USAGE_TRANSFER_SRC\n" : "") 
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eTransferDst             ? "    VK_IMAGE_USAGE_TRANSFER_DST\n" : "") 
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eSampled                 ? "    VK_IMAGE_USAGE_SAMPLED\n" : "") 
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eStorage                 ? "    VK_IMAGE_USAGE_STORAGE\n" : "") 
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eColorAttachment         ? "    VK_IMAGE_USAGE_COLOR_ATTACHMENT\n" : "") 
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eDepthStencilAttachment  ? "    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT\n" : "") 
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eTransientAttachment     ? "    VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT\n" : "") 
-            << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eInputAttachment         ? "    VK_IMAGE_USAGE_INPUT_ATTACHMENT" : "")
-            << std::endl;
-            initialized = true;
-        }
+        // Uncomment to print out suported usage flags
+        // static bool initialized = false;
+        // if ( initialized == false ) {
+        //     std::cout << "Supported swap chain's image usages include:\n"
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eTransferSrc             ? "    VK_IMAGE_USAGE_TRANSFER_SRC\n" : "") 
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eTransferDst             ? "    VK_IMAGE_USAGE_TRANSFER_DST\n" : "") 
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eSampled                 ? "    VK_IMAGE_USAGE_SAMPLED\n" : "") 
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eStorage                 ? "    VK_IMAGE_USAGE_STORAGE\n" : "") 
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eColorAttachment         ? "    VK_IMAGE_USAGE_COLOR_ATTACHMENT\n" : "") 
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eDepthStencilAttachment  ? "    VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT\n" : "") 
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eTransientAttachment     ? "    VK_IMAGE_USAGE_TRANSIENT_ATTACHMENT\n" : "") 
+        //     << (surface_capabilities.supportedUsageFlags & vk::ImageUsageFlagBits::eInputAttachment         ? "    VK_IMAGE_USAGE_INPUT_ATTACHMENT" : "")
+        //     << std::endl;
+        //     initialized = true;
+        // }
         
         // Color attachment flag must always be supported
         // We can define other usage flags but we always need to check if they are supported
@@ -503,11 +546,6 @@ namespace AppCore {
             throw std::runtime_error( std::string( std::string( "VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT image usage is not supported by the swap chain!\n" ) ) );
         }
 
-        // #ifdef __APPLE__
-        // return vk::ImageUsageFlagBits::eColorAttachment;
-        // #else
-        // return vk::ImageUsageFlagBits::eColorAttachment | vk::ImageUsageFlagBits::eInputAttachment;
-        // #endif
         return vk::ImageUsageFlagBits::eColorAttachment;
     }
 

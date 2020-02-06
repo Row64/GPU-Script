@@ -8,8 +8,6 @@ namespace AppCore {
 
     void LayoutManager::InitLayouts() {
 
-        cout << "------- Running LayoutManager::InitLayouts -------- " << endl;
-
         PTM.AddSUI<UnderlayUI> ( "UnderUI" );
         PTM.AddTUI<ExampleLibraryUI> ( "ExampleLib" );
 
@@ -49,6 +47,14 @@ namespace AppCore {
         PTM.AddPaneTree( "Ice Example", 1,      {   {"Main",            "",              "*",        "*",        "y",        "",     "",     ""     },
                                                     {"IceShader",       "Main",          "*",        "*",        "",         "",     "",     ""     },
                                                     {"IceSliders",      "Main",          "300",      "120",       "",        "",    "-20",  "-20"   }
+        });
+
+        // =============PaneTreeName====LazyUpdate===Name=============ParentName======WidthExp=====HeightExp===Split=======Mode====FloatX==FloatY=== 
+        PTM.AddPaneTree( "MultiSUI Example",  1,    {  {"Main",            "",              "*",        "*",        "y",        "",     "",     ""     },
+                                                    {"OceanSlider",     "Main",          "",         "90",       "",        "",     "",     ""     },
+                                                    {"BottomPane",      "Main",          "*",        "*",        "x",        "",     "",     ""    },
+                                                    {"OceanShader",     "BottomPane",    "50%",        "*",        "",        "",     "",     ""   },
+                                                    {"ParticlesShader", "BottomPane",    "*",        "*",        "",        "",     "",     ""     }
         });
         
 
