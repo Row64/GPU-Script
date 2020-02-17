@@ -40,11 +40,6 @@ VKAPI_ATTR void VKAPI_CALL vkDestroyDebugUtilsMessengerEXT(VkInstance instance, 
 }
 // END FOR DEBUGGING ------------------------------------------------------------------------------------------------------------------ //
 
-#if VK_HEADER_VERSION >= 131 
-    #define VULKAN_VERSION_2
-#elif VK_HEADER_VERSION >= 68
-    #define VULKAN_VERSION_1
-#endif
 
 namespace AppCore {
 
@@ -56,9 +51,9 @@ namespace AppCore {
 
     void VulkanBase::InitVulkan( WindowParameters window ) {
         
-        #if VK_HEADER_VERSION >= 131 
+        #ifdef VULKAN_VERSION_2
             Vulkan.Version = VK_MAKE_VERSION( 1, 2, 0 );
-        #elif VK_HEADER_VERSION >= 68
+        #else
             Vulkan.Version = VK_MAKE_VERSION( 1, 1, 0 );
         #endif
 
@@ -105,6 +100,10 @@ namespace AppCore {
 
     const QueueParameters & VulkanBase::GetPresentQueue() const {
         return Vulkan.PresentQueue;
+    }
+
+    const QueueParameters & VulkanBase::GetComputeQueue() const {
+        return Vulkan.ComputeQueue;
     }
 
     vk::SurfaceKHR const & VulkanBase::GetPresentationSurface() const {
@@ -236,9 +235,10 @@ namespace AppCore {
 
         uint32_t selected_graphics_queue_family_index = UINT32_MAX;
         uint32_t selected_present_queue_family_index = UINT32_MAX;
+        uint32_t selected_compute_queue_family_index = UINT32_MAX;
 
         // Physical device extensions we want to use
-        #if VK_HEADER_VERSION >= 131 
+        #ifdef VULKAN_VERSION_2
         std::vector<const char*> extensions = {
             VK_KHR_SWAPCHAIN_EXTENSION_NAME,
             VK_KHR_TIMELINE_SEMAPHORE_EXTENSION_NAME
@@ -250,11 +250,11 @@ namespace AppCore {
         #endif
 
         for( auto & physical_device : physical_devices ) {
-            if( CheckPhysicalDeviceProperties( physical_device, extensions, selected_graphics_queue_family_index, selected_present_queue_family_index ) ) {
+            if( CheckPhysicalDeviceProperties( physical_device, extensions, selected_graphics_queue_family_index, selected_present_queue_family_index, selected_compute_queue_family_index, false ) ) {
                 Vulkan.PhysicalDevice = physical_device;
                 vk::PhysicalDeviceProperties device_properties = physical_device.getProperties();
                 Vulkan.PhysicalDeviceName = device_properties.deviceName;
-                std::cout << "--- VulkanBase::CreateDevice     Selected Physical Device: " << Vulkan.PhysicalDeviceName << std::endl;
+                std::cout << "--- VulkanBase::CreateDevice      Selected Physical Device: " << Vulkan.PhysicalDeviceName << std::endl;
 
                 // Uncomment to show the highest version API supported by the physical device
                 // uint32_t major_version = VK_VERSION_MAJOR( device_properties.apiVersion );
@@ -262,14 +262,20 @@ namespace AppCore {
                 // uint32_t patch_version = VK_VERSION_PATCH( device_properties.apiVersion );
                 // std::cout << "--- VulkanBase::CreateDevice     Physical Device Supported API: " << major_version << " " << minor_version << " " << patch_version << std::endl;
                 
+                // Uncomment to show the selected queues
+                std::cout << "--- VulkanBase::CreateDevice      Graphics, Present, Compute Queue Indexes: " << selected_graphics_queue_family_index << ", " << selected_present_queue_family_index << ", " << selected_compute_queue_family_index << std::endl;
+
                 break;
             }
         }
         if( !Vulkan.PhysicalDevice ) {
             throw std::runtime_error( "Could not select physical device based on the chosen properties!" );
         }
-
+        
         std::vector<float> queue_priorities = { 1.0f };
+        if( selected_compute_queue_family_index == selected_graphics_queue_family_index ) {
+            queue_priorities.push_back(1.0f);
+        }
         std::vector<vk::DeviceQueueCreateInfo> queue_create_infos = {
             vk::DeviceQueueCreateInfo(
                 vk::DeviceQueueCreateFlags( 0 ),                // VkDeviceQueueCreateFlags     flags
@@ -280,11 +286,25 @@ namespace AppCore {
         };
 
         if( selected_graphics_queue_family_index != selected_present_queue_family_index ) {
+            std::vector<float> present_queue_priorities = { 1.0f };
+            if( selected_compute_queue_family_index == selected_present_queue_family_index ) {
+                present_queue_priorities.push_back(1.0f);
+            }
             queue_create_infos.emplace_back(
-                vk::DeviceQueueCreateFlags( 0 ),                // VkDeviceQueueCreateFlags     flags
-                selected_present_queue_family_index,            // uint32_t                     queueFamilyIndex
-                static_cast<uint32_t>(queue_priorities.size()), // uint32_t                     queueCount
-                queue_priorities.data()                         // const float                 *pQueuePriorities
+                vk::DeviceQueueCreateFlags( 0 ),                        // VkDeviceQueueCreateFlags     flags
+                selected_present_queue_family_index,                    // uint32_t                     queueFamilyIndex
+                static_cast<uint32_t>(present_queue_priorities.size()), // uint32_t                     queueCount
+                present_queue_priorities.data()                         // const float                 *pQueuePriorities
+            );
+        }
+
+        if( (selected_compute_queue_family_index != selected_graphics_queue_family_index)  && (selected_compute_queue_family_index != selected_present_queue_family_index) ) {
+            float cpriorities = 1.0f;
+            queue_create_infos.emplace_back(
+                vk::DeviceQueueCreateFlags( 0 ),                        // VkDeviceQueueCreateFlags     flags
+                selected_compute_queue_family_index,                    // uint32_t                     queueFamilyIndex
+                1,                                                      // uint32_t                     queueCount
+                &cpriorities                                            // const float                 *pQueuePriorities
             );
         }
         
@@ -299,86 +319,130 @@ namespace AppCore {
             nullptr                                           // const VkPhysicalDeviceFeatures    *pEnabledFeatures
         );
 
-        #if VK_HEADER_VERSION >= 131
-        // Enable the timeline feature in the physical device by adding it to the pNext element of PhysicalDeviceFeatures2
-        vk::PhysicalDeviceFeatures2 device_features = Vulkan.PhysicalDevice.getFeatures2();
-        vk::PhysicalDeviceTimelineSemaphoreFeatures timeline_feature(VK_TRUE);
-        device_features.setPNext( &timeline_feature );
-        device_create_info.setPNext( &device_features );      // PhysicalDeviceFeatures2 added to the pNext element of DeviceCreateInfo
+        vk::PhysicalDeviceFeatures2 device_features;
+        device_create_info.setPNext( &device_features );      // Add PhysicalDeviceFeatures2 to the pNext element of DeviceCreateInfo
+
+        // --- Enable Device Features ---
+        // See documentation for VkPhysicalDeviceFeatures struct for list of available features
+        vk::PhysicalDeviceFeatures main_features;
+        main_features.shaderInt16 = VK_TRUE;
+        main_features.shaderInt64 = VK_TRUE;
+        device_features.setFeatures( main_features );         // Pass PhysicalDeviceFeatures into the PhysicalDeviceFeatures2 struct 
+        
+        // --- Enable Extension / Core Features ---
+          
+        #ifdef VULKAN_VERSION_2
+        // See documentation for VkPhysicalDeviceVulkan11Features and VkPhysicalDeviceVulkan12Features for list of available features
+        vk::PhysicalDeviceVulkan11Features vulkan11_features;
+        vk::PhysicalDeviceVulkan12Features vulkan12_features;
+        vulkan12_features.setPNext( &vulkan11_features );
+        device_features.setPNext( &vulkan12_features );      // Pass Vulkan11 and Vulkan12 features into the PhysicalDeviceFeatures2 struct   
+        vulkan12_features.timelineSemaphore = VK_TRUE;
+        #else
+        vk::PhysicalDeviceVulkan11Features vulkan11_features;
+        device_features.setPNext( &vulkan11_features );
         #endif
         
         Vulkan.Device = Vulkan.PhysicalDevice.createDeviceUnique( device_create_info );
         Vulkan.GraphicsQueue.FamilyIndex = selected_graphics_queue_family_index;
         Vulkan.PresentQueue.FamilyIndex = selected_present_queue_family_index;
+        Vulkan.ComputeQueue.FamilyIndex = selected_compute_queue_family_index;
 
-        std::cout << "--- VulkanBase::CreateDevice     Created Vulkan Device" << std::endl;
+        std::cout << "--- VulkanBase::CreateDevice      Created Vulkan Device" << std::endl;
     }
 
 
-    bool VulkanBase::CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, std::vector<const char*> device_extensions, uint32_t & selected_graphics_queue_family_index, uint32_t & selected_present_queue_family_index ) {
-
-        auto available_extensions = physical_device.enumerateDeviceExtensionProperties();
+    bool VulkanBase::CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, std::vector<const char*> device_extensions, uint32_t & selected_graphics_queue_family_index, uint32_t & selected_present_queue_family_index, uint32_t & selected_compute_queue_family_index, bool sync_compute ) {
 
         vk::PhysicalDeviceProperties device_properties = physical_device.getProperties();
-
+        
+        // Check whether physical device supports the extensions requested
+        auto available_extensions = physical_device.enumerateDeviceExtensionProperties();
         for( size_t i = 0; i < device_extensions.size(); ++i ) {
             if( !CheckExtensionAvailability( device_extensions[i], available_extensions ) ) {
                 throw std::runtime_error( std::string( "Physical device " + std::string( device_properties.deviceName ) + " doesn't support extension named \"" + device_extensions[i] + "\"!" ).c_str() );
             }
         }
 
+        // Check whether physical devices supports at least Vulkan 1.1
         uint32_t major_version = VK_VERSION_MAJOR( device_properties.apiVersion );
-
         if( (major_version < 1) || (device_properties.limits.maxImageDimension2D < 4096) ) {
             throw std::runtime_error( std::string( "Physical device " + std::string( device_properties.deviceName ) + " doesn't support required parameters!" ).c_str() );
         }
 
+        // Cycle through the physical device queues and select which queues to use
         auto queue_family_properties = physical_device.getQueueFamilyProperties();
         std::vector<VkBool32> queue_present_support( queue_family_properties.size() );
 
         uint32_t graphics_queue_family_index = UINT32_MAX;
         uint32_t present_queue_family_index = UINT32_MAX;
+        uint32_t compute_queue_family_index = UINT32_MAX;
 
+        // Cycle through the queues and picks graphics, present, and compute queues
         for( uint32_t i = 0; i < queue_family_properties.size(); ++i ) {
+
+            // Check whether current queue supports presentation to the surface
             queue_present_support[i] = physical_device.getSurfaceSupportKHR( i, *Vulkan.PresentationSurface );
 
-            if( (queue_family_properties[i].queueCount > 0) && (queue_family_properties[i].queueFlags & vk::QueueFlagBits::eGraphics) ) {
+            if (queue_family_properties[i].queueCount > 0) {
 
-                // Select first queue that supports graphics
-                if( graphics_queue_family_index == UINT32_MAX ) {
-                    graphics_queue_family_index = i;
+                // Check if the queue supports graphics
+                if (queue_family_properties[i].queueFlags & vk::QueueFlagBits::eGraphics) {
+
+                    // If graphics queue not assigned, get the first queue that supports graphics
+                    if( graphics_queue_family_index == UINT32_MAX ) {
+                        graphics_queue_family_index = i;
+                    }
+
+                    // Prefer the queue if it supports supports both graphics and present
+                    if( queue_present_support[i] ) {
+                        graphics_queue_family_index = i;
+                        present_queue_family_index = i;
+
+                        // If the queue supports graphics, compute, and present - select it and return
+                        if ((queue_family_properties[i].queueFlags & vk::QueueFlagBits::eCompute) && sync_compute) {
+                            selected_graphics_queue_family_index = i;
+                            selected_present_queue_family_index = i;
+                            selected_compute_queue_family_index = i;
+                            return true;
+                        }
+                    }
                 }
 
-                // If there is queue that supports both graphics and present - prefer it
-                if( queue_present_support[i] ) {
-                    selected_graphics_queue_family_index = i;
-                    selected_present_queue_family_index = i;
-                    return true;
+                // If compute queue not assigned, get first queue that supports compute satisfying sync/async request
+                if ( (compute_queue_family_index == UINT32_MAX) && (queue_family_properties[i].queueFlags & vk::QueueFlagBits::eCompute) ) {
+                    if ( ( sync_compute && graphics_queue_family_index == i) || ( !sync_compute && graphics_queue_family_index != i) ) {
+                        compute_queue_family_index = i;
+                    }
                 }
+
+                // If present queue not assigned, get first queue that supports present
+                if ( (present_queue_family_index == UINT32_MAX) && queue_present_support[i] ) {
+                    present_queue_family_index = i;
+                }
+            
             }
         }
 
-        // We don't have queue that supports both graphics and present so we have to use separate queues
-        for( uint32_t i = 0; i < queue_family_properties.size(); ++i ) {
-            if( queue_present_support[i] ) {
-                present_queue_family_index = i;
-                break;
-            }
-        }
-
-        // If this device doesn't support queues with graphics and present capabilities don't use it
-        if( (graphics_queue_family_index == UINT32_MAX) || (present_queue_family_index == UINT32_MAX) ) {
+        // If this device doesn't support queues with graphics, present, and compute capabilities don't use it
+        if( (graphics_queue_family_index == UINT32_MAX) || (present_queue_family_index == UINT32_MAX ) || (compute_queue_family_index == UINT32_MAX ) ) {
             throw std::runtime_error( std::string( "Could not find queue families with required properties on physical device " + std::string( device_properties.deviceName ) + "!" ).c_str() );
         }
 
         selected_graphics_queue_family_index = graphics_queue_family_index;
         selected_present_queue_family_index = present_queue_family_index;
+        selected_compute_queue_family_index = compute_queue_family_index;
         return true;
     }
 
     void VulkanBase::GetDeviceQueue() {
+        
         Vulkan.GraphicsQueue.Handle = Vulkan.Device->getQueue( Vulkan.GraphicsQueue.FamilyIndex, 0 );
-        Vulkan.PresentQueue.Handle = Vulkan.Device->getQueue( Vulkan.PresentQueue.FamilyIndex, 0 );     
+        Vulkan.PresentQueue.Handle = Vulkan.Device->getQueue( Vulkan.PresentQueue.FamilyIndex, 0 );
+
+        uint32_t compute_index = 0;
+        if ( (Vulkan.ComputeQueue.FamilyIndex == Vulkan.GraphicsQueue.FamilyIndex) || (Vulkan.ComputeQueue.FamilyIndex == Vulkan.PresentQueue.FamilyIndex) ) { compute_index = 1;}
+        Vulkan.ComputeQueue.Handle = Vulkan.Device->getQueue( Vulkan.ComputeQueue.FamilyIndex, compute_index );     
     }
 
 

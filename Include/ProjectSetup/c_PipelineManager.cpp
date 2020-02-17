@@ -9,7 +9,8 @@ namespace AppCore {
     PipelineManager::PipelineManager( std::string const & title, AppDataIO & inAppData ) :
         Title( title ),
         AppData( inAppData ),
-        LM( *this ) {
+        LM( *this ),
+        CM( *this ) {
     }
 
     PipelineManager::~PipelineManager() {
@@ -30,6 +31,8 @@ namespace AppCore {
 
     void PipelineManager::InitPipelines( WindowParameters window ) {
         FrameResources.resize( 3 );
+        ComputeResources.resize( 3 );
+
         InitVulkan( window );
         UILib::UISetWindowHandlePointer( window.WindowPtr );
         
@@ -44,6 +47,10 @@ namespace AppCore {
 
         // Init SUI-Driven and TUI-Driven Pipelines
         LM.Init( FrameResources.size() );
+
+        // Create compute resources
+        CreateComputeResources();
+        CM.Init();
     }
 
     void PipelineManager::CreateFrameResources() {
@@ -56,17 +63,32 @@ namespace AppCore {
     
             frame_resources->ImageAvailableSemaphore = CreateSemaphore();
             frame_resources->FinishedRenderingSemaphore = CreateSemaphore();
-            #if VK_HEADER_VERSION >= 131 
+            #ifdef VULKAN_VERSION_2
                 // Only create timeline sempahore if Vulkan Version is 1.2
                 frame_resources->TimelineSemaphore = CreateSemaphore( vk::SemaphoreType::eTimeline, (uint64_t) 100 );
             #endif
             frame_resources->Fence = CreateFence( true );
             frame_resources->CommandPool = CreateCommandPool( GetGraphicsQueue().FamilyIndex, vk::CommandPoolCreateFlagBits::eResetCommandBuffer | vk::CommandPoolCreateFlagBits::eTransient );
             frame_resources->CommandBufferList.resize( LM.BufferCount );
-            for ( int i = 0; i < frame_resources->CommandBufferList.size(); ++i ) {
-                    frame_resources->CommandBufferList[i] = std::move( AllocateCommandBuffers( *frame_resources->CommandPool, vk::CommandBufferLevel::ePrimary, 1 )[0] );
-            }
-            
+            frame_resources->CommandBufferList = std::move( AllocateCommandBuffers( *frame_resources->CommandPool, vk::CommandBufferLevel::ePrimary, LM.BufferCount ) );
+
+        }
+    }
+
+    void PipelineManager::CreateComputeResources() {
+        std::cout << "--- PipelineManager::CreateComputeResources   Creating " << ComputeResources.size() << " Frame Resources" << std::endl;
+
+        for( size_t i = 0; i < ComputeResources.size(); ++i ) {
+
+            ComputeResources[i] = std::make_unique<ComputeResourcesData>();
+            #ifdef VULKAN_VERSION_2
+                // Only create timeline sempahore if Vulkan Version is 1.2
+                ComputeResources[i]->TimelineSemaphore = CreateSemaphore( vk::SemaphoreType::eTimeline, (uint64_t) 100 );
+            #endif
+            ComputeResources[i]->Fence = CreateFence( true );
+            ComputeResources[i]->CommandPool = CreateCommandPool( GetComputeQueue().FamilyIndex, vk::CommandPoolCreateFlagBits::eResetCommandBuffer | vk::CommandPoolCreateFlagBits::eTransient );
+            ComputeResources[i]->CommandBuffer = std::move( AllocateCommandBuffers( *ComputeResources[i]->CommandPool, vk::CommandBufferLevel::ePrimary, 1 )[0] );
+
         }
     }
 
@@ -171,8 +193,11 @@ namespace AppCore {
     }
 
     // Drawing
+
     void PipelineManager::RenderPipelines() {
-        
+
+        CheckActiveComputes();
+
         if(Pause){
             return;
         }
@@ -263,7 +288,42 @@ namespace AppCore {
     }
 
     void PipelineManager::OnKeyPress( int key ) {
+        if (key == 67 ) {
+            ExecuteCompute( "Basic Compute" );                // Run compute when key "c" is pressed.
+        } else if ( key == 77 ) {
+            ExecuteCompute( "Mandelbrot");                    // Run mandelbrot when key "m" is pressed.
+        }
     }
+
+    // Computing
+
+    int PipelineManager::ExecuteCompute( string inName ) {
+        for( int i = 0; i < (int) ComputeResources.size(); ++i ) {
+            auto iter = ACRMap.find( i );
+            if ( iter == ACRMap.end() ) {
+                if ( CM.Execute(inName, ComputeResources[i].get()) ) {
+                    ACRMap.insert( pair<int, int>(i , CM.GetCOMIndex(inName)) );
+                    std::cout << "--- PipelineManager::ComputePipelines     '" << inName << "' is using resource " << i << std::endl;
+                }
+                return i;
+            }
+        }
+        std::cout << "--- PipelineManager::ComputePipelines     '" << inName << "' was not submitted because all resources are busy" << std::endl;
+        return -1;      // No compute resources available
+    }
+
+    void PipelineManager::CheckActiveComputes() {
+        for ( auto iter = ACRMap.cbegin(); iter != ACRMap.cend(); ) {
+            if ( GetDevice().waitForFences( { *ComputeResources[iter->first]->Fence }, VK_FALSE, 1000000000 ) == vk::Result::eSuccess ) {
+                CM.GetCOM(iter->second)->SubmitComplete();
+                ACRMap.erase(iter++);
+            } else {
+                ++iter;
+            }
+        }
+
+    }
+
 
 
 } // end namespace AppCore
