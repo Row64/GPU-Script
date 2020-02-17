@@ -5,8 +5,8 @@
 
 using namespace std;
 
-const int WIDTH = 320000; // Size of rendered mandelbrot set.
-const int HEIGHT = 240000; // Size of renderered mandelbrot set.
+const int WIDTH = 3200; // Size of rendered mandelbrot set.
+const int HEIGHT = 2400; // Size of renderered mandelbrot set.
 const int WORKGROUP_SIZE = 32; // Workgroup size in compute shader.
 
 namespace AppCore {
