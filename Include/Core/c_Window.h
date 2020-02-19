@@ -30,6 +30,13 @@
 #include "UILib.h"
 
 
+#if VK_HEADER_VERSION >= 131 
+    #define VULKAN_VERSION_2
+#elif VK_HEADER_VERSION >= 68
+    #define VULKAN_VERSION_1
+#endif
+
+
 namespace AppCore {
 
     // ************************************************************ //

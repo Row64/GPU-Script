@@ -61,6 +61,33 @@ namespace AppCore {
     };
 
     // ************************************************************ //
+    // ComputeResourcesData                                         //
+    //                                                              //
+    // Struct containing data used to generate a single frame       //
+    // ************************************************************ //
+    struct ComputeResourcesData {
+
+        vk::UniqueSemaphore                   TimelineSemaphore;
+        vk::UniqueFence                       Fence;
+        vk::UniqueCommandPool                 CommandPool;
+        vk::UniqueCommandBuffer               CommandBuffer;
+        bool                                  Available;
+
+        ComputeResourcesData() :
+            TimelineSemaphore(),
+            Fence(),
+            CommandPool(),
+            CommandBuffer(),
+            Available(true) {
+        }
+
+        virtual ~ComputeResourcesData() {
+        }
+
+    };
+
+
+    // ************************************************************ //
     // CurrentFrameData                                             //
     //                                                              //
     // Struct for managing frame rendering process                  //
@@ -115,15 +142,15 @@ namespace AppCore {
 
         // Resource creation methods
         vk::UniqueShaderModule                CreateShaderModule( char const * filename ) const;
-        ImageParameters                       CreateImage( uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::MemoryPropertyFlagBits property, vk::ImageAspectFlags aspect, vk::ImageType image_type = vk::ImageType::e2D, vk::ImageViewType image_view_type = vk::ImageViewType::e2D ) const;
-        BufferParameters                      CreateBuffer( uint32_t size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlagBits memoryProperty ) const;
+        ImageParameters                       CreateImage( uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::MemoryPropertyFlags property, vk::ImageAspectFlags aspect, vk::ImageType image_type = vk::ImageType::e2D, vk::ImageViewType image_view_type = vk::ImageViewType::e2D ) const;
+        BufferParameters                      CreateBuffer( uint32_t size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags memoryProperty ) const;
         DescriptorSetParameters               CreateDescriptorResources( std::vector<vk::DescriptorSetLayoutBinding> const & layout_bindings, std::vector<vk::DescriptorPoolSize> const & pool_sizes ) const;
         vk::UniqueFramebuffer                 CreateFramebuffer( std::vector<vk::ImageView> const & image_views, vk::Extent2D const & extent, vk::RenderPass const & render_pass ) const;
         vk::UniqueSampler                     CreateSampler( vk::SamplerMipmapMode mipmap_mode, vk::SamplerAddressMode address_mode, vk::Bool32 unnormalized_coords ) const;
         vk::UniqueRenderPass                  CreateRenderPass( std::vector<RenderPassAttachmentData> const & attachment_descriptions, std::vector<RenderPassSubpassData> const & subpass_descriptions, std::vector<vk::SubpassDependency> const & dependencies ) const;
         vk::UniquePipelineLayout              CreatePipelineLayout( std::vector<vk::DescriptorSetLayout> const & descriptor_set_layouts, std::vector<vk::PushConstantRange> const & push_constant_ranges ) const;
         
-        #if VK_HEADER_VERSION >= 131 
+        #ifdef VULKAN_VERSION_2
         vk::UniqueSemaphore                   CreateSemaphore( vk::SemaphoreType inType = vk::SemaphoreType::eBinary, uint64_t inValue = 0 ) const;
         #else
         vk::UniqueSemaphore                   CreateSemaphore() const;
@@ -138,15 +165,19 @@ namespace AppCore {
         void                CopyDataToImage( uint32_t data_size, void const * data, vk::Image & target_image, uint32_t width, uint32_t height, vk::ImageSubresourceRange const & image_subresource_range, vk::ImageLayout current_image_layout, vk::AccessFlags current_image_access, vk::PipelineStageFlags generating_stages, vk::ImageLayout new_image_layout, vk::AccessFlags new_image_access, vk::PipelineStageFlags consuming_stages ) const;
         void                CopyDataToBuffer( uint32_t data_size, void const * data, vk::Buffer target_buffer, vk::DeviceSize buffer_offset, vk::AccessFlags current_buffer_access, vk::PipelineStageFlags generating_stages, vk::AccessFlags new_buffer_access, vk::PipelineStageFlags consuming_stages ) const;
 
-        std::vector<std::unique_ptr<FrameResourcesData>>  FrameResources;
+        // Compute tools
+        void                COM_CopyDataToBuffer( uint32_t data_size, void const * data, vk::Buffer target_buffer, vk::DeviceSize buffer_offset, vk::AccessFlags current_buffer_access, vk::PipelineStageFlags generating_stages, vk::AccessFlags new_buffer_access, vk::PipelineStageFlags consuming_stages ) const;
+
+        std::vector<std::unique_ptr<FrameResourcesData>>    FrameResources;
+        std::vector<std::unique_ptr<ComputeResourcesData>>  ComputeResources;
 
     private:
     
         void                        ImplCreateImage( uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::UniqueImage & image, vk::ImageType image_type ) const;
-        void                        ImplAllocateImageMemory( vk::Image & image, vk::MemoryPropertyFlagBits property, vk::UniqueDeviceMemory & memory ) const;
+        void                        ImplAllocateImageMemory( vk::Image & image, vk::MemoryPropertyFlags property, vk::UniqueDeviceMemory & memory ) const;
         void                        ImplCreateImageView( vk::Image & image, vk::Format format, vk::ImageAspectFlags aspect, vk::UniqueImageView & image_view, vk::ImageViewType image_view_type ) const;
         void                        ImplCreateBuffer( uint32_t size, vk::BufferUsageFlags usage, vk::UniqueBuffer & buffer ) const;
-        void                        ImplAllocateBufferMemory( vk::Buffer & buffer, vk::MemoryPropertyFlagBits property, vk::UniqueDeviceMemory & memory ) const;
+        void                        ImplAllocateBufferMemory( vk::Buffer & buffer, vk::MemoryPropertyFlags property, vk::UniqueDeviceMemory & memory ) const;
         void                        ImplCreateDescriptorSetLayout( std::vector<vk::DescriptorSetLayoutBinding> const & layout_bindings, vk::UniqueDescriptorSetLayout & set_layout ) const;
         void                        ImplCreateDescriptorPool( std::vector<vk::DescriptorPoolSize> const & pool_sizes, uint32_t max_sets, vk::UniqueDescriptorPool & descriptor_pool ) const;
         void                        ImplAllocateDescriptorSets( std::vector<vk::DescriptorSetLayout> const & descriptor_set_layout, vk::DescriptorPool & descriptor_pool, std::vector<vk::UniqueDescriptorSet> & descriptor_sets ) const;

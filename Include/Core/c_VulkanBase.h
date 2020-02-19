@@ -145,6 +145,7 @@ namespace AppCore {
         vk::UniqueDevice              Device;
         QueueParameters               GraphicsQueue;
         QueueParameters               PresentQueue;
+        QueueParameters               ComputeQueue;
         vk::UniqueSurfaceKHR          PresentationSurface;
         SwapChainParameters           SwapChain;
 
@@ -155,6 +156,7 @@ namespace AppCore {
             Device(),
             GraphicsQueue(),
             PresentQueue(),
+            ComputeQueue(),
             PresentationSurface(),
             SwapChain() {
         }
@@ -185,6 +187,7 @@ namespace AppCore {
         vk::Device const &              GetDevice() const;
         QueueParameters const &         GetGraphicsQueue() const;
         QueueParameters const &         GetPresentQueue() const;
+        QueueParameters const &         GetComputeQueue() const;
         vk::SurfaceKHR const &          GetPresentationSurface() const;
         SwapChainParameters const &     GetSwapChain() const;
         int                             GetVersion();
@@ -206,7 +209,7 @@ namespace AppCore {
         void                            CreateInstance( uint32_t version );
         void                            CreatePresentationSurface();
         void                            CreateDevice( uint32_t version );
-        bool                            CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, std::vector<const char*> device_extensions, uint32_t & graphics_queue_family_index, uint32_t & present_queue_family_index );
+        bool                            CheckPhysicalDeviceProperties( vk::PhysicalDevice const & physical_device, std::vector<const char*> device_extensions, uint32_t & selected_graphics_queue_family_index, uint32_t & selected_present_queue_family_index, uint32_t & selected_compute_queue_family_index, bool sync_compute = true );
         void                            GetDeviceQueue();
         void                            CreateSwapChainImageViews();
 

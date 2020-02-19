@@ -26,7 +26,8 @@
 namespace AppCore {
 
     VkPipelineBase::VkPipelineBase() :
-        FrameResources() {
+        FrameResources(),
+        ComputeResources() {
     }
 
     VkPipelineBase::~VkPipelineBase() {
@@ -55,7 +56,7 @@ namespace AppCore {
         return GetDevice().createShaderModuleUnique( shader_module_create_info );
     }
 
-    ImageParameters VkPipelineBase::CreateImage( uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::MemoryPropertyFlagBits property, vk::ImageAspectFlags aspect, vk::ImageType image_type, vk::ImageViewType image_view_type ) const {
+    ImageParameters VkPipelineBase::CreateImage( uint32_t width, uint32_t height, vk::Format format, vk::ImageUsageFlags usage, vk::MemoryPropertyFlags property, vk::ImageAspectFlags aspect, vk::ImageType image_type, vk::ImageViewType image_view_type ) const {
 
         vk::UniqueImage tmp_image;
         ImplCreateImage( width, height, format, usage, tmp_image, image_type );
@@ -76,7 +77,7 @@ namespace AppCore {
         return std::move( image );
     }
 
-    BufferParameters VkPipelineBase::CreateBuffer( uint32_t size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlagBits memoryProperty ) const {
+    BufferParameters VkPipelineBase::CreateBuffer( uint32_t size, vk::BufferUsageFlags usage, vk::MemoryPropertyFlags memoryProperty ) const {
 
         vk::UniqueBuffer tmp_buffer;
         ImplCreateBuffer( size, usage, tmp_buffer );
@@ -213,7 +214,7 @@ namespace AppCore {
         return GetDevice().createPipelineLayoutUnique( layout_create_info );
         }
 
-#if VK_HEADER_VERSION >= 131 
+#ifdef VULKAN_VERSION_2
     vk::UniqueSemaphore VkPipelineBase::CreateSemaphore( vk::SemaphoreType inType, uint64_t inValue ) const {
         
         if ( inType == vk::SemaphoreType::eBinary ) {
@@ -483,6 +484,83 @@ namespace AppCore {
 
     }
 
+    void VkPipelineBase::COM_CopyDataToBuffer( uint32_t data_size, void const * data, vk::Buffer target_buffer, vk::DeviceSize buffer_offset, vk::AccessFlags current_buffer_access, vk::PipelineStageFlags generating_stages, vk::AccessFlags new_buffer_access, vk::PipelineStageFlags consuming_stages ) const {
+        
+        
+        // Create staging buffer and map it's memory to copy data from the CPU
+        
+        StagingBufferParameters staging_buffer;
+        
+        staging_buffer.Buffer = CreateBuffer( data_size, vk::BufferUsageFlagBits::eTransferSrc, vk::MemoryPropertyFlagBits::eHostVisible );
+        staging_buffer.Pointer = GetDevice().mapMemory( *staging_buffer.Buffer.Memory, 0, data_size );
+
+        std::memcpy( staging_buffer.Pointer, data, data_size );
+
+        vk::MappedMemoryRange memory_range(
+            *staging_buffer.Buffer.Memory,              // VkDeviceMemory                         memory
+            0,                                          // VkDeviceSize                           offset
+            VK_WHOLE_SIZE                               // VkDeviceSize                           size
+        );
+        GetDevice().flushMappedMemoryRanges( { memory_range } );
+        GetDevice().unmapMemory( *staging_buffer.Buffer.Memory );
+        
+
+        // Allocate temporary command buffer from a temporary command pool
+
+        vk::UniqueCommandPool command_pool = CreateCommandPool( GetComputeQueue().FamilyIndex, vk::CommandPoolCreateFlagBits::eTransient );
+        vk::UniqueCommandBuffer command_buffer = std::move( AllocateCommandBuffers( *command_pool, vk::CommandBufferLevel::ePrimary, 1 )[0] );
+
+
+        // Record command buffer which copies data from the staging buffer to the destination buffer
+
+        command_buffer->begin( { vk::CommandBufferUsageFlagBits::eOneTimeSubmit } );
+
+        vk::BufferMemoryBarrier pre_transfer_buffer_memory_barrier(
+            current_buffer_access,                        // VkAccessFlags                          srcAccessMask
+            vk::AccessFlagBits::eTransferWrite,           // VkAccessFlags                          dstAccessMask
+            VK_QUEUE_FAMILY_IGNORED,                      // uint32_t                               srcQueueFamilyIndex
+            VK_QUEUE_FAMILY_IGNORED,                      // uint32_t                               dstQueueFamilyIndex
+            target_buffer,                                // VkBuffer                               buffer
+            buffer_offset,                                // VkDeviceSize                           offset
+            data_size                                     // VkDeviceSize                           size
+        );
+        command_buffer->pipelineBarrier( generating_stages, vk::PipelineStageFlagBits::eTransfer, vk::DependencyFlags( 0 ), {}, { pre_transfer_buffer_memory_barrier }, {} );
+
+        vk::BufferCopy buffer_copy_region(
+            0,                                            // VkDeviceSize                           srcOffset
+            buffer_offset,                                // VkDeviceSize                           dstOffset
+            data_size                                     // VkDeviceSize                           size
+        );
+        command_buffer->copyBuffer( *staging_buffer.Buffer.Handle, target_buffer, { buffer_copy_region } );
+
+        vk::BufferMemoryBarrier post_transfer_buffer_memory_barrier(
+            vk::AccessFlagBits::eTransferWrite,           // VkAccessFlags                          srcAccessMask
+            new_buffer_access,                            // VkAccessFlags                          dstAccessMask
+            VK_QUEUE_FAMILY_IGNORED,                      // uint32_t                               srcQueueFamilyIndex
+            VK_QUEUE_FAMILY_IGNORED,                      // uint32_t                               dstQueueFamilyIndex
+            target_buffer,                                // VkBuffer                               buffer
+            buffer_offset,                                // VkDeviceSize                           offset
+            data_size                                     // VkDeviceSize                           size
+        );
+        command_buffer->pipelineBarrier( vk::PipelineStageFlagBits::eTransfer, consuming_stages, vk::DependencyFlags( 0 ), {}, { post_transfer_buffer_memory_barrier }, {} );
+        command_buffer->end();
+
+
+        // Submit
+  
+        vk::UniqueFence fence = CreateFence( false );
+        vk::SubmitInfo submit_info(
+            0,                                            // uint32_t                               waitSemaphoreCount
+            nullptr,                                      // const VkSemaphore                     *pWaitSemaphores
+            nullptr,                                      // const VkPipelineStageFlags            *pWaitDstStageMask
+            1,                                            // uint32_t                               commandBufferCount
+            &(*command_buffer)                            // const VkCommandBuffer                 *pCommandBuffers
+        );
+        GetComputeQueue().Handle.submit( { submit_info }, *fence );
+        GetDevice().waitForFences( { *fence }, VK_FALSE, 3000000000 );
+
+    }
+
 
     // Private implementation functions
 
@@ -505,7 +583,7 @@ namespace AppCore {
         image = GetDevice().createImageUnique( image_create_info );
     }
 
-    void VkPipelineBase::ImplAllocateImageMemory( vk::Image & image, vk::MemoryPropertyFlagBits property, vk::UniqueDeviceMemory & memory ) const {
+    void VkPipelineBase::ImplAllocateImageMemory( vk::Image & image, vk::MemoryPropertyFlags property, vk::UniqueDeviceMemory & memory ) const {
         vk::MemoryRequirements image_memory_requirements = GetDevice().getImageMemoryRequirements( image );
         vk::PhysicalDeviceMemoryProperties memory_properties = GetPhysicalDevice().getMemoryProperties();
 
@@ -549,7 +627,7 @@ namespace AppCore {
         buffer = GetDevice().createBufferUnique( buffer_create_info );
     }
 
-    void VkPipelineBase::ImplAllocateBufferMemory( vk::Buffer & buffer, vk::MemoryPropertyFlagBits property, vk::UniqueDeviceMemory & memory ) const {
+    void VkPipelineBase::ImplAllocateBufferMemory( vk::Buffer & buffer, vk::MemoryPropertyFlags property, vk::UniqueDeviceMemory & memory ) const {
         vk::MemoryRequirements buffer_memory_requirements = GetDevice().getBufferMemoryRequirements( buffer );
         vk::PhysicalDeviceMemoryProperties memory_properties = GetPhysicalDevice().getMemoryProperties();
         for( uint32_t i = 0; i < memory_properties.memoryTypeCount; ++i ) {

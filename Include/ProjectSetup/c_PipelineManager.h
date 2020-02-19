@@ -3,6 +3,7 @@
 
 #include "UILib.h"
 #include "c_LayoutManager.h"
+#include "c_ComputeManager.h"
 
 namespace AppCore {
 
@@ -26,20 +27,25 @@ namespace AppCore {
 
         void                        InitPipelines( WindowParameters window ) final override;
         void                        RenderPipelines() final override;
-
         void                        UpdateUIInputs();
 
         void                        OnKeyPress( int key ) override final;
+
+        int                         ExecuteCompute( string inName );
     
     private:
 
         std::string                 Title;
         AppDataIO &                 AppData;
         LayoutManager               LM;
+        ComputeManager              CM;
+
+        map<int, int>               ACRMap;      // Map of active ComputeResource ( compute resource index, COM pipeline index)
 
         // Prepare methods
 
         void                        CreateFrameResources();
+        void                        CreateComputeResources();
 
         // Drawing methods
 
@@ -50,6 +56,10 @@ namespace AppCore {
         void                        OnWindowSizeChanged_Pre() final override;
         void                        OnWindowSizeChanged_Post() final override;
         void                        LogKeyState(string inStr);
+
+        // Compute methods
+        void                        CheckActiveComputes();
+
     };
 
 

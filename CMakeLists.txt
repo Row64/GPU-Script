@@ -43,6 +43,8 @@ set(TUTORIAL_LIST
 #############################
 
 include_directories( "Include" )
+include_directories( "Include/COM_Solvers" )
+include_directories( "Include/Compute" )
 include_directories( "Include/Core" )
 include_directories( "Include/ProjectSetup" )
 include_directories( "Include/Layouts" )
@@ -62,6 +64,7 @@ file( GLOB_RECURSE SHARED_SOURCE_FILES
 
 file( GLOB EXTERNAL_SOURCE_FILES
 	"External/imgui/*.cpp"
+	"External/*.cpp"
 )
 
 set( ALL_SHARED_FILES
@@ -222,11 +225,13 @@ macro( DRC_COMPILE_SHADERS _folder )
 
 	file( GLOB_RECURSE FRAG_SHADER_FILES "${CMAKE_SOURCE_DIR}/${_folder}/*.frag")
 	file( GLOB_RECURSE VERT_SHADER_FILES "${CMAKE_SOURCE_DIR}/${_folder}/*.vert")
+	file( GLOB_RECURSE COMP_SHADER_FILES "${CMAKE_SOURCE_DIR}/${_folder}/*.comp")
 
 	file( COPY ${FRAG_SHADER_FILES} DESTINATION "${CMAKE_SOURCE_DIR}/build/Shaders/" )
 	file( COPY ${VERT_SHADER_FILES} DESTINATION "${CMAKE_SOURCE_DIR}/build/Shaders/" )
+	file( COPY ${COMP_SHADER_FILES} DESTINATION "${CMAKE_SOURCE_DIR}/build/Shaders/" )
 
-	foreach (shaderfile ${FRAG_SHADER_FILES} ${VERT_SHADER_FILES} )
+	foreach (shaderfile ${FRAG_SHADER_FILES} ${VERT_SHADER_FILES} ${COMP_SHADER_FILES} )
 		message (STATUS "Compiling Shader: " ${shaderfile})
 		set(VERTFRAG ${shaderfile})
 		get_filename_component(VERTFRAG_NAME ${shaderfile} NAME)

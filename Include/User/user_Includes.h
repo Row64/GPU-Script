@@ -12,4 +12,6 @@
 #include "SUI_Demo_Ice.h"
 #include "TUI_Demo_Ice.h"
 
+#include "COM_mandelbrot.h"
+
 #endif // USER_INCLUDES_H
