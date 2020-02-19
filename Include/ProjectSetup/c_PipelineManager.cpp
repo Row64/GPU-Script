@@ -31,7 +31,7 @@ namespace AppCore {
 
     void PipelineManager::InitPipelines( WindowParameters window ) {
         FrameResources.resize( 3 );
-        ComputeResources.resize( 3 );
+        ComputeResources.resize( AppData.ComputeResourceCount );
 
         InitVulkan( window );
         UILib::UISetWindowHandlePointer( window.WindowPtr );
