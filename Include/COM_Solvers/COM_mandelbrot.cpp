@@ -10,7 +10,7 @@ namespace AppCore {
 
     COM_Mandelbrot::COM_Mandelbrot( PipelineManager &parent ) :
         COM_PipelineBase( parent ) {
-        Parameters.shader_comp_path = "Shaders/COM_Mandelbrot.comp.spv";
+        Parameters.shader_comp_path = "Shaders/COM_mandelbrot.comp.spv";
         NbWorkgroups = {ceil(WIDTH / float(WORKGROUP_SIZE)), ceil(HEIGHT / float(WORKGROUP_SIZE)), 1};
     }
 
