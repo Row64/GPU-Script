@@ -38,7 +38,9 @@ sudo apt install cmake
 
 <img src="images/Install_Notes/ubuntu_about.png" width="600">
 
-Get the latest drivers by enabling a PPA.
+Get the latest drivers by enabling a PPA. 
+
+If you already have these PPA's installed, you can skip the `sudo add-apt-repository` step. You can also check and manage what PPA's and external software you have installed by opening Ubuntu's **Software & Updates** and looking on the **Other Software** tab.
 
 For **AMD / Intel**:
 
@@ -66,20 +68,21 @@ Enable the [Proprietary GPU Drivers PPA](https://launchpad.net/~graphics-drivers
 
 ```
 sudo add-apt-repository ppa:graphics-drivers/ppa
-sudp apt update
+sudo apt update
 sudo apt upgrade
 ```
 
-You can auto-install the drivers by:
+Check the latest driver version available to you:
 ```
 ubuntu-drivers devices
-sudo ubuntu-drivers autoinstall
 ```
 
-Or install a specific driver:
+Install the desired driver:
 ```
-sudo apt install nvidia-graphics-drivers-440
+sudo apt install nvidia-driver-440
 ```
+
+**Reboot after you install your drivers.**
 
 *References:*
 * [https://linuxconfig.org/install-and-test-vulkan-on-linux](https://linuxconfig.org/install-and-test-vulkan-on-linux)
@@ -92,7 +95,7 @@ sudo apt install nvidia-graphics-drivers-440
 
 *Please check [GPU Script - Vulkan Version Compatibility](Vulkan_Compatibility.md) before installing Vulkan.*
 
-**If you plan to install Vulkan 1.2, check with your GPU hardware vender to see whether they have a driver that supports it.**
+**If you plan to install Vulkan 1.2, check with your GPU hardware vendor to see whether they have a driver that supports it.**
 
 >The LunarG SDK for Vulkan 1.2 currently does not include a Vulkan driver. You will need to check with your GPU hardware vendor for a Vulkan Installable Client Driver (ICD). The SDK will allow you to build Vulkan applications but you will need a Vulkan ICD to execute them. 
 >* [NVIDIA Drivers](https://developer.nvidia.com/vulkan-driver) (Version 440.48.02 supports Vulkan 1.2)
@@ -109,7 +112,7 @@ sudo apt install nvidia-graphics-drivers-440
 
 This will install Vulkan to your system.
 
-You can test whether Vulkan is working by running `vkcube` or `vkvia` in the terminal. You should see a spinning LunarG cube.
+You can test whether Vulkan is working by running `vkcube` in the terminal. You should see a spinning LunarG cube.
 
 <img src="images/Install_Notes/ubuntu_vkcube.png" width="500">
 
@@ -142,7 +145,7 @@ Or run the setup script that is provided in the top-level directory of your SDK 
 source ~/<PATH TO SDK>/1.1.xx.y/setup-env.sh
 ```
 
-You can test whether Vulkan is working by running `<PATH TO SDK>/bin/vkcube` or `<PATH TO SDK>/bin/vkvia`. You should see a spinning LunarG cube.
+You can test whether Vulkan is working by running `<PATH TO SDK>/bin/vkcube`. You should see a spinning LunarG cube.
 
 ### If you have multiple versions of Vulkan installed and want to specify which version to use for the project, update [CMakeLists.txt](../CMakeLists.txt) to specify the path to the VulkanSDK you want to use.
 

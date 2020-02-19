@@ -13,7 +13,7 @@
 
 ## **Shader Tutorials**
 
-Deeper application customization involves working working shaders.
+Deeper application customization involves working with shaders.
 
 [Shadertoy](https://www.shadertoy.com) has some of the best shader writers in the world. Many of their examples are very inspiring and you can learn a lot about shader programming by studying their examples. We've taken a few fun examples and plugged them into our Vulkan pipeline. 
 
@@ -22,3 +22,7 @@ These are also great examples of how you can make small changes in the SUI pipel
 * [Particles Example](Tutorials_ShaderToy_Particles.md)
 * [Ocean Example](Tutorials_ShaderToy_Ocean.md)
 * [Ice Example](Tutorials_ShaderToy_Ice.md)
+
+## **GPU Compute Tutorials**
+
+* [GPU Compute](Tutorials_GPUCompute.md)

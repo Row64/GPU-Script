@@ -39,7 +39,7 @@ namespace AppCore {
         fs::path                AppPath;
         fs::path                RootPath;
 
-        int                     Current_Tab = 0;
+        int                     ComputeResourceCount = 3;
 
         // Ocean Demo
         float                   OceanSpeed = 1.0f;

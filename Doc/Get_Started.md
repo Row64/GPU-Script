@@ -17,7 +17,7 @@
 
 <img src="images/Getting_Started/gs_start.png">
 
-### There are 2 Vulkan Pipelines in this executable. <br> Both are drawn with a different UI strategy.
+### There are 2 Vulkan Graphics Pipelines in this executable. <br> Both are drawn with a different UI strategy.
 
 <img src="images/Getting_Started/gs_strategy.png">
 
