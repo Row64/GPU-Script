@@ -214,9 +214,9 @@ endif()
 message(STATUS "GLSL_COMPILER: " ${GLSL_COMPILER})
 
 # Macro to copy data files to build/Data
-macro( DRC_COPY_DATA _folder )
+macro( DRC_COPY_DATA _folder _destfolder )
 	file( GLOB DATA_FILES "${CMAKE_SOURCE_DIR}/${_folder}/*.*" )
-	file( COPY ${DATA_FILES} DESTINATION "${CMAKE_SOURCE_DIR}/build/Data/" )
+	file( COPY ${DATA_FILES} DESTINATION "${CMAKE_SOURCE_DIR}/build/${_destfolder}/" )
 endmacro()
 
 # Macro to cycle through each shader file and compile with GLSL
@@ -248,7 +248,8 @@ macro( DRC_COMPILE_SHADERS _folder )
 endmacro()
 
 set( SHADER_DEPENDENCIES )
-DRC_COPY_DATA( "Data" )
+DRC_COPY_DATA( "Data" "Data" )
+DRC_COPY_DATA( "Data/Icons" "Data/Icons" )
 DRC_COMPILE_SHADERS( "Shaders" )
 
 if ( TUTORIAL )
@@ -256,7 +257,7 @@ if ( TUTORIAL )
 		message( STATUS "Adding Tutorial: " ${tutorial})
 		if( EXISTS "${CMAKE_SOURCE_DIR}/${tutorial}/Data" )
 			message( STATUS "Copying Data: " "${tutorial}/Data")
-			DRC_COPY_DATA( "${tutorial}/Data" )
+			DRC_COPY_DATA( "${tutorial}/Data" "Data" )
 		endif()
 		DRC_COMPILE_SHADERS( ${tutorial} )
 	endforeach()
