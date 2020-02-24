@@ -7,8 +7,8 @@
 
 namespace AppCore {
     
-    ExampleLibraryUI::ExampleLibraryUI( AppDataIO & inAppData ) :
-       TUI_PaneBase( inAppData ) {
+    ExampleLibraryUI::ExampleLibraryUI( PipelineManager &parent ) :
+       TUI_PaneBase( parent ) {
     }
     
     ExampleLibraryUI::~ExampleLibraryUI() {

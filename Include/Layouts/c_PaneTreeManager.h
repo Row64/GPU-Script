@@ -77,6 +77,7 @@ namespace AppCore {
             } else {
                 T *obj = new T( Parent );
                 SUIObjects.push_back( obj );
+                obj->PaneName = inName;
                 SUIMap.insert( pair<string, int>( inName, (int) SUIObjects.size() - 1) );
                 TypeMap.insert( pair<string, int>( inName, 1 ) );
             }
@@ -88,8 +89,9 @@ namespace AppCore {
                 std::cout << "Assert: PaneTreeManager map already has object with name " << iter->first << std::endl;
                 assert( iter == TypeMap.end() );
             } else {
-                T *obj = new T( AppData );
+                T *obj = new T( Parent );
                 TUIObjects.push_back( obj );
+                obj->PaneName = inName;
                 TUIMap.insert( pair<string, int>( inName, (int) TUIObjects.size() - 1) );
                 TypeMap.insert( pair<string, int>( inName, 0 ) );
             }

@@ -37,13 +37,13 @@ int main( int argc, char **argv ) {
     
 
     AppCore::AppDataIO app_data ( argv[0] );
-	AppCore::Window window;
-	AppCore::PipelineManager sample ("Example App", app_data);
+    AppCore::Window window(&app_data);
+	AppCore::PipelineManager sample ("GPU Script Example App", app_data);
     
 
 try {
 	// Window creation
-	window.Create( "Example App", 1000, 800 );
+    window.Create( "GPU Script Example App", 1000, 800 );
 
 	// Vulkan preparations and initialization
 	sample.InitPipelines( window.GetParameters() );

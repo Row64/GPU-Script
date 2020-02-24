@@ -6,8 +6,8 @@
 
 namespace AppCore { 
 
-    OceanTUI::OceanTUI( AppDataIO & inAppData ) :
-       TUI_PaneBase( inAppData ) {
+    OceanTUI::OceanTUI( PipelineManager &parent ) :
+       TUI_PaneBase( parent ) {
     }
     
     OceanTUI::~OceanTUI() {

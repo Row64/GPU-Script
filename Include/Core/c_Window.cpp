@@ -2,6 +2,7 @@
 #define C_WINDOW_CPP
 
 #include "c_Window.h"
+#include "stb_image.h"
 
 using namespace std;
 namespace AppCore {
@@ -61,7 +62,13 @@ namespace AppCore {
 
 
     Window::Window() :
-        Parameters() {
+        Parameters(),
+        AppData(nullptr) {
+    }
+
+    Window::Window( AppDataIO * inAppData ) :
+        Parameters(),
+        AppData( inAppData ) {
     }
 
     Window::~Window() {
@@ -90,6 +97,18 @@ namespace AppCore {
             return;
         }
 
+        if ( AppData != nullptr ) {
+            if (fs::exists( AppData->RootPath / "Data/Icons") ) {
+                vector<GLFWimage> icons;
+                for (const auto & entry : fs::directory_iterator( AppData->RootPath / "Data/Icons" ) ){
+                    GLFWimage img; int n;
+                    img.pixels = stbi_load(CONVERT_PATH(entry.path()), &img.width, &img.height, &n, 0);
+                    icons.push_back(img);
+                }
+                glfwSetWindowIcon(Parameters.WindowPtr, (int) icons.size(), icons.data());
+            }
+        }
+        
     }
 
     void Window::RenderingLoop( WindowBase &project ) const {

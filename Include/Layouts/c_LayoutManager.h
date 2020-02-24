@@ -35,7 +35,7 @@ namespace AppCore {
         void                    OnWindowSizeChanged_Pre();
         void                    OnWindowSizeChanged_Post();
 
-    private:
+    // private:
 
         PipelineManager &           Parent;
         AppDataIO &                 AppData;

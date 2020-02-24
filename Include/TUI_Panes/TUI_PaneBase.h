@@ -6,6 +6,7 @@
 
 #include "UILib.h"
 #include "user_AppDataIO.h"
+#include "c_VkPipelineBase.h"
 using namespace UILib;
 
 #include <iostream>
@@ -20,6 +21,8 @@ using namespace glm;
 //  namespace VKDR
 namespace AppCore {
     
+    class PipelineManager;
+
     // ************************************************************ //
     // TUI_PaneBase Class                                           //
     // ************************************************************ //
@@ -27,13 +30,15 @@ namespace AppCore {
 
     public:
 
-       TUI_PaneBase( AppDataIO & inAppData );
+       TUI_PaneBase( PipelineManager &parent );
         virtual ~TUI_PaneBase();
 
         void                    UpdateDimensions( float inX, float inY, float inW, float inH);
         void                    UpdateMode( string inMode );
 
         virtual void            DrawPane();
+        virtual void            ListenForMessage(string inType, string inMessage);
+        string                  PaneName = "";
     
     protected:
 
@@ -42,6 +47,8 @@ namespace AppCore {
         float                   Width = 0.0f;
         float                   Height = 0.0f;
         string                  Mode = "";
+
+        PipelineManager &       Parent;
         AppDataIO &             AppData;
 
         virtual void            StartPane();

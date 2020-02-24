@@ -30,6 +30,7 @@ namespace AppCore {
         void                        UpdateUIInputs();
 
         void                        OnKeyPress( int key ) override final;
+        void                        SendAppMessage(string Filter, string inType, string inMessage);
 
         int                         ExecuteCompute( string inName );
     
