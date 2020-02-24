@@ -5,8 +5,8 @@
 
 namespace AppCore { 
 
-    IceTUI::IceTUI( AppDataIO & inAppData ) :
-       TUI_PaneBase( inAppData ) {
+    IceTUI::IceTUI( PipelineManager &parent ) :
+       TUI_PaneBase( parent ) {
     }
     
     IceTUI::~IceTUI() {

@@ -295,6 +295,19 @@ namespace AppCore {
         }
     }
 
+    void PipelineManager::SendAppMessage(string inFilter, string inType, string inMessage){
+        if(inFilter == "TUI"){
+            for(TUI_PaneBase* tuiPane:LM.CurrentTUI){
+                tuiPane->ListenForMessage(inType, inMessage);
+            }
+        }
+        else if(inFilter == "SUI"){
+            for(SUI_PipelineBase* suiPane:LM.CurrentSUI){
+                suiPane->ListenForMessage(inType, inMessage);
+            }
+        }
+    }
+
     // Computing
 
     int PipelineManager::ExecuteCompute( string inName ) {

@@ -14,7 +14,7 @@ namespace AppCore {
     
     public:
 
-        OceanTUI( AppDataIO & inAppData );
+        OceanTUI( PipelineManager &parent );
         ~OceanTUI();
         
         void                DrawPane() override final;

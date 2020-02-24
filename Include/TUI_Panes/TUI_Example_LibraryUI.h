@@ -12,7 +12,7 @@ namespace AppCore {
     
     public:
 
-        ExampleLibraryUI( AppDataIO & inAppData );
+        ExampleLibraryUI( PipelineManager &parent );
         ~ExampleLibraryUI();
         
         

@@ -109,6 +109,9 @@ namespace AppCore {
 
         void                    UpdateDimensions( float inX, float inY, float inW, float inH);
         void                    UpdateMode( string inMode );
+        virtual void            ListenForMessage(string inType, string inMessage);
+
+        string                  PaneName = "";
 
     protected:
 

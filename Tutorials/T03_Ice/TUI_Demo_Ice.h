@@ -14,7 +14,7 @@ namespace AppCore {
     
     public:
 
-        IceTUI( AppDataIO & inAppData );
+        IceTUI( PipelineManager &parent );
         ~IceTUI();
         
         void                DrawPane() override final;

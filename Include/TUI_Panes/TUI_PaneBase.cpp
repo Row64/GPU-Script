@@ -2,15 +2,17 @@
 #define TUI_PANEBASE_CPP
 
 #include "TUI_PaneBase.h"
+#include "c_PipelineManager.h"
 
 namespace AppCore {
 
-    TUI_PaneBase::TUI_PaneBase( AppDataIO & inAppData ) :
+    TUI_PaneBase::TUI_PaneBase( PipelineManager &parent ) :
         X(),
         Y(),
         Width(),
         Height(),
-        AppData( inAppData ) {
+        Parent( parent ),
+        AppData( parent.GetAppData() ) {
     }
 
     TUI_PaneBase::~TUI_PaneBase() {
@@ -55,6 +57,7 @@ namespace AppCore {
         ImGui::PopStyleColor(2);
     }
 
+    void TUI_PaneBase::ListenForMessage(string inType, string inMessage){}
     
     
 }

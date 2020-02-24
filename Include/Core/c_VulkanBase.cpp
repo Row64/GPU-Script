@@ -338,9 +338,6 @@ namespace AppCore {
         vulkan12_features.setPNext( &vulkan11_features );
         device_features.setPNext( &vulkan12_features );      // Pass Vulkan11 and Vulkan12 features into the PhysicalDeviceFeatures2 struct   
         vulkan12_features.timelineSemaphore = VK_TRUE;
-        #else
-        vk::PhysicalDeviceVulkan11Features vulkan11_features;
-        device_features.setPNext( &vulkan11_features );
         #endif
         
         Vulkan.Device = Vulkan.PhysicalDevice.createDeviceUnique( device_create_info );

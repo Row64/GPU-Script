@@ -96,6 +96,8 @@ namespace AppCore {
         Mode = inMode;
     }
 
+    void SUI_PipelineBase::ListenForMessage(string inType, string inMessage){}
+
     // ------------ Protected Methods ------------
 
     // Init methods
