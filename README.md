@@ -55,4 +55,4 @@ GpuScript also includes a powerful adaptive user interface which has many featur
 
 
 <br><br>
-<img src="Doc/images/DRComputing.png" width="500">
+<img src="Doc/images/r64_icon_500px.png" width="300">
