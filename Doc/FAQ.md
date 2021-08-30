@@ -10,81 +10,81 @@
 ```
 
 -----------------------------------------------------------------------
-## **I hear Vulkan is awesome fast.  How fast is it?**
+## **I hear Vulkan® is awesome fast.  How fast is it?**
 
-In our internal tests where we re-wrote parts of other applications the increase is 2X to 50X faster.  And as GPUs get faster the increase will grow. Vulkan is a cross-platform API made by the GPU hardware vendors (mostly: Intel, AMD and NVidea).  So it's going to be the fastest and lowest level cross-platform option.
+In our internal tests where we re-wrote parts of other applications the increase is 2X to 50X faster.  And as GPUs get faster the increase will grow. Vulkan® is a cross-platform API made by the GPU hardware vendors (mostly: Intel, AMD and NVidea).  So it's going to be the fastest and lowest level cross-platform option.
 
 -----------------------------------------------------------------------
-## **Is Vulkan growing? Is Vulkan a good choice for the core of an app?**
+## **Is Vulkan® growing? Is Vulkan® a good choice for the core of an app?**
 
-Yes, Vulkan is growing, and yes, Vulkan is an excellent choice for an app core - both now and looking forward.
+Yes, Vulkan® is growing, and yes, Vulkan® is an excellent choice for an app core - both now and looking forward.
 
-Because of the important historic role OpenGL took in cross-platform graphics, and the enthusiasm of the hardware vendors - Vulkan is in a very powerful position for growth and industry transformation in 2020. 
+Because of the important historic role OpenGL took in cross-platform graphics, and the enthusiasm of the hardware vendors - Vulkan® is in a very powerful position for growth and industry transformation in 2020. 
 
-Here’s a detailed breakdown of major players in this market and how the world is shifting towards Vulkan as the graphics platform of the future:
+Here’s a detailed breakdown of major players in this market and how the world is shifting towards Vulkan® as the graphics platform of the future:
 
 ### **AMD**
 
 * In 2013, AMD created project [Mantle](https://en.wikipedia.org/wiki/Mantle_(API)), a leading-edge graphics API that pushes the entire industry forward
 * It had huge improvements in both GPU performance and areas where CPU was the limiting factor
 * In a case study, AMD announced the performance in Battlefield 4 was up to 319% faster in Mantle
-* In 2015, AMD donated Mantle to the Khronos Group as the foundation of Vulkan, so a next-generation low-level API could standardize across the industry
-* As a founder of Vulkan, AMD is a huge and enthusiastic supporter 
+* In 2015, AMD donated Mantle to the Khronos Group as the foundation of Vulkan®, so a next-generation low-level API could standardize across the industry
+* As a founder of Vulkan®, AMD is a huge and enthusiastic supporter 
 
->Vulkan supports close-to-metal control enabling faster performance and better image quality. No other graphics API offers the same powerful combination of OS compatibility, rendering features, and hardware efficiency.
+>Vulkan® supports close-to-metal control enabling faster performance and better image quality. No other graphics API offers the same powerful combination of OS compatibility, rendering features, and hardware efficiency.
 >
->[*-AMD Website*](https://www.amd.com/en/technologies/vulkan)
+>[*-AMD Website*](https://www.amd.com/en/technologies/Vulkan)
 
 ### **Intel**
 
-* Intel is a very active member of the Vulkan community, and they have lots of excellent example code.  Part of their application code examples grew into the starting point for GpuScript.
-* [Jason Ekstrand](https://www.youtube.com/watch?v=l3Hyd2sWSvA) is a Lead on the Intel Vulkan team and is a member of the Khronos Vulkan working group.  He has also done many excellent presentations on training people to use Vulkan.
+* Intel is a very active member of the Vulkan® community, and they have lots of excellent example code.  Part of their application code examples grew into the starting point for GpuScript.
+* [Jason Ekstrand](https://www.youtube.com/watch?v=l3Hyd2sWSvA) is a Lead on the Intel Vulkan® team and is a member of the Khronos Vulkan® working group.  He has also done many excellent presentations on training people to use Vulkan®.
 
->Just as parallelism and multithreaded programming paved the way for the performance strides of multicore CPUs, Vulkan APIs are poised to forge a future of multithreaded, cross-platform GPU programming, and high-performance rendering, regardless of the target device.
+>Just as parallelism and multithreaded programming paved the way for the performance strides of multicore CPUs, Vulkan® APIs are poised to forge a future of multithreaded, cross-platform GPU programming, and high-performance rendering, regardless of the target device.
 >
->[*-Intel Website*](https://software.intel.com/en-us/articles/vulkan-apis-for-unity)
+>[*-Intel Website*](https://software.intel.com/en-us/articles/Vulkan-apis-for-unity)
 
 
 ### **NVIDIA**
 
-NVIDIA has worked closely with the Khronos Group, the creators of Vulkan, throughout its development.  NVIDIA calls Vulkan, "The only cross-platform next-generation 3D API," and points out that: DirectX is Windows only and Metal is Apple only.  Vulkan is one API for all GPUs. See [presentation.](https://on-demand.gputechconf.com/siggraph/2015/presentation/SIG1501-Piers-Daniell.pdf)
+NVIDIA has worked closely with the Khronos Group, the creators of Vulkan®, throughout its development.  NVIDIA calls Vulkan®, "The only cross-platform next-generation 3D API," and points out that: DirectX is Windows only and Metal is Apple only.  Vulkan® is one API for all GPUs. See [presentation.](https://on-demand.gputechconf.com/siggraph/2015/presentation/SIG1501-Piers-Daniell.pdf)
 
->We have been using NVIDIA hardware and drivers on both Windows and Android for Vulkan development, and the reductions in CPU overhead have been impressive.
+>We have been using NVIDIA hardware and drivers on both Windows and Android for Vulkan® development, and the reductions in CPU overhead have been impressive.
 >
 >*-John Carmack, Chief Technology Officer, Oculus*
 
 
 ### **Google**
 
-In October 2019 Google announced at the [X.Org Developer's Conference](https://xdc2019.x.org/event/5/contributions/576/attachments/441/695/SwiftShader_Lightning_Talk.pdf), "We are all in with Vulkan."
+In October 2019 Google announced at the [X.Org Developer's Conference](https://xdc2019.x.org/event/5/contributions/576/attachments/441/695/SwiftShader_Lightning_Talk.pdf), "We are all in with Vulkan®."
 
-* Vulkan is mandatory on Android Q/10, and future Google Phones.  This strategy is called "Vulkan Everywhere".
-* Chrome has Vulkan support:
-    * WebGPU has Vulkan backend
-    * The core drawing libraries in Chrome (SKIA) have a Vulkan backend
-* Fushia is the next generation Google OS for PCs, phones, tablets and IOT devices.  It's 100% Vulkan - Vulkan only for low-level drawing
-* Google is embracing a Linux + Vulkan stack for gaming.  Stadia, Google’s cloud gaming service is 100% Vulkan on Linux   
-* Google wrote SwiftShader to run Vulkan on multi-threaded CPUs so that it is 100% compatible on all hardware - even without a graphics driver or a graphics card
+* Vulkan® is mandatory on Android Q/10, and future Google Phones.  This strategy is called "Vulkan® Everywhere".
+* Chrome has Vulkan® support:
+    * WebGPU has Vulkan® backend
+    * The core drawing libraries in Chrome (SKIA) have a Vulkan® backend
+* Fushia is the next generation Google OS for PCs, phones, tablets and IOT devices.  It's 100% Vulkan® - Vulkan® only for low-level drawing
+* Google is embracing a Linux + Vulkan® stack for gaming.  Stadia, Google’s cloud gaming service is 100% Vulkan® on Linux   
+* Google wrote SwiftShader to run Vulkan® on multi-threaded CPUs so that it is 100% compatible on all hardware - even without a graphics driver or a graphics card
 
 ### **Valve**
 
-Valve has funded and driven many important aspects of Vulkan becoming a full-fledged cross-platform API:
-* They arranged for Vulkan to work simply on Mac by getting MoltenVK to be released Open Source.
-* They fund LunarG who creates the main Vulkan SDK and debugging tools (used by GpuScript).
-* They are active in bringing more Windows games to Linux through Vulkan, especially through the Steam gaming platform.
+Valve has funded and driven many important aspects of Vulkan® becoming a full-fledged cross-platform API:
+* They arranged for Vulkan® to work simply on Mac by getting MoltenVK to be released Open Source.
+* They fund LunarG who creates the main Vulkan® SDK and debugging tools (used by GpuScript).
+* They are active in bringing more Windows games to Linux through Vulkan®, especially through the Steam gaming platform.
 
-> We have an ongoing investment in making Vulkan a competitive and well-supported graphics API, as well as making sure it has first-class support on Linux platforms.
+> We have an ongoing investment in making Vulkan® a competitive and well-supported graphics API, as well as making sure it has first-class support on Linux platforms.
 >
 >[*-Valve*](https://www.pcgamesn.com/steam-machines/valve-remove-steam-machines)
 
 
 ### **Samsung**
 
-Samsung has been involved with Vulkan the day it started, since they "believe in the importance of high-quality graphics on mobile devices."
+Samsung has been involved with Vulkan® the day it started, since they "believe in the importance of high-quality graphics on mobile devices."
 
-Samsung reports: Vulkan offers the same environment for desktop and mobile GPUs, making the task of writing portable software much easier.
+Samsung reports: Vulkan® offers the same environment for desktop and mobile GPUs, making the task of writing portable software much easier.
 
->Samsung and Epic Games teamed up to optimize the performance of global phenomenon Fortnite for Galaxy devices.  Specialized Vulkan API support and optimized memory usage improved performance on Galaxy smartphones.
+>Samsung and Epic Games teamed up to optimize the performance of global phenomenon Fortnite for Galaxy devices.  Specialized Vulkan® API support and optimized memory usage improved performance on Galaxy smartphones.
 >
 >[*-Sangmin Lee From Samsung*](https://www.youtube.com/watch?v=0AWgPbjxjT8)
 
@@ -94,27 +94,16 @@ Here are neutral parties:
 
 ### **Apple**
 
-Vulkan code can run on top of Metal (the Apple GPU SDK) using MoltenVK.  This is how GpuScript runs on the Mac and is compatible with iOS.
+Vulkan® code can run on top of Metal (the Apple GPU SDK) using MoltenVK.
 
-An interesting recent development is Apple announced they will remove OpenGL (an older but very popular GPU graphics API) from future macOS releases.  This inadvertently helps Vulkan, because all cross-platform GPU libraries need to target Vulkan or Metal if they want to keep macOS supported.
-
-Apple is also very active and is one of the leaders in the WebGPU standard being developed for web browsers.
-
->This is Apple's draft proposal for the WebGPU API. It started as a mapping of Metal to JavaScript, but that won't be where it ends up. Not only are there some things in Metal that don't quite fit with Vulkan and D3D12, we also don't want to be tied to the Metal API.
->
->[*-Apple's WebGPU API Proposal*](https://github.com/gpuweb/proposals/blob/master/WebGPU-Apple/api-proposal.html)
+However coding directly in Metal simplifies deployment on macOS & iOS.  For this reason Row64 considers Metal the best option for Row64 on the Mac / iPad / iPhone.
 
 <br>
 
-***So big picture is there's a very unique "lightning-in-a-bottle" situation around Vulkan becoming the hardware and software standard for the GPU.  There's really no other candidate. Non-GPU computing is a 100X slower now, and will be 1000X, 10,000X, 100,000X, etc. slower in the near future.***
+***So big picture is there's a very unique "lightning-in-a-bottle" situation around Vulkan® becoming the hardware and software standard for the GPU.  There's really no other candidate. Non-GPU computing is a 100X slower now, and will be 1000X, 10,000X, 100,000X, etc. slower in the near future.***
 
 -----------------------------------------------------------------------
-## **Why is this project called GPU Script, but from what I see only runs C++?**
-
-Our goal is to simplify using Vulkan to the point where it is easy to script. We are in the middle of a JavaScript layer and have our eye on Python. Once we have these pieces up and running and well tested we will bring them into the build.
-
------------------------------------------------------------------------
-## **I don't get what you mean by SUI and TUI?  What does this mean?  I don't see it in other Vulkan projects.**
+## **I don't get what you mean by SUI and TUI?  What does this mean?  I don't see it in other Vulkan® projects.**
 
 These are terms that help simplify the 2 major types of drawing pipelines:
 
@@ -127,19 +116,19 @@ These are terms that help simplify the 2 major types of drawing pipelines:
 -----------------------------------------------------------------------
 ## **Can I use this to do 2D?  To make a desktop app?**
 
-Yes, this is a great platform for 2D.  The Vulkan community is primarily oriented to games and 3D projects.  We've extended that base and added lots of tools and functions to also excel at 2D projects.
+Yes, this is a great platform for 2D.  The Vulkan® community is primarily oriented to games and 3D projects.  We've extended that base and added lots of tools and functions to also excel at 2D projects.
 
 -----------------------------------------------------------------------
 ## **Can I use this to do 3D?  To make a game?**
 
-Yes, since Vulkan is designed for 3D you can.  Just use the SUI Shader UI to pass 3D verticies, vertex colors and uv coordinates.  
+Yes, since Vulkan® is designed for 3D you can.  Just use the SUI Shader UI to pass 3D verticies, vertex colors and uv coordinates.  
 
 We have a [tutorial](Tutorials_ShaderToy_Particles.md) showing how to run ShaderToy examples here which would help get you started.
 
 -----------------------------------------------------------------------
 ## **What is the relationship between this code and ImGUI?**
 
-This code started as a app framework for running multiple Vulkan pipelines at the same time (the current Shader UI framework).  As we were planning out a 2D triangle submission UI we experiemented with ImGUI and thought it was great.  So we've included it in the app framework.
+This code started as a app framework for running multiple Vulkan® pipelines at the same time (the current Shader UI framework).  As we were planning out a 2D triangle submission UI we experiemented with ImGUI and thought it was great.  So we've included it in the app framework.
 
 ImGUI tends to specialize in overlay UI that pops up and changes dynamically.  It's also really good for lists of different type of data.  So it's part of our app and we recommend using it for those cases.
 
@@ -196,7 +185,7 @@ However, this is not a great for mouse and keyboard events because they can easi
 UILib::DragStart()
 ```
 
-will return true for only one frame of drawing.  So you can do something more complicated like begin a drag rectangle.  And you're guaranteed to be aligned with the Vulkan draw.
+will return true for only one frame of drawing.  So you can do something more complicated like begin a drag rectangle.  And you're guaranteed to be aligned with the Vulkan® draw.
 
 Under the hood this is happening both in `PipelineManager::UpdateUIInputs` and ImGui. They make sure that a change value is only for one frame.  Either carrying over last value (mouse change) or buffering values (key change) and filling state.
 
@@ -209,44 +198,3 @@ Check out this "Beginner's Guide to Coding Graphics Shaders"
 
 https://gamedevelopment.tutsplus.com/tutorials/a-beginners-guide-to-coding-graphics-shaders--cms-23313
 
------------------------------------------------------------------------
-## **How does anti-aliasing work?**
-
-For now the Triangle UI pipeline uses the AA features of ImGui.
-This is done with a vertex color Anti-Alias Fringe.
-
-**Note:** Anti-aliased filling requires points to be in clockwise order
-
------------------------------------------------------------------------
-## **Can I run this on iPhone / iPad?**
-
-On iOS it works the same way as our Mac build.  Which is MoltenVK maps Vulkan into Metal calls: https://moltengl.com/moltenvk/
-
-In fact the first 8 months of dev when this project started was on Mac.  Apple is currently accepting Vulkan-over-Metal apps in their store now as well: https://www.phoronix.com/scan.php?page=news_item&px=Apple-Lets-In-Updated-MVK-App
-
------------------------------------------------------------------------
-## **Can I run this on Android?**
-
-Vulkan works really well on Android.  Both Google & Samsung are big supporters of Vulkan. We have only done some initial tests, but here's the main site if you want to investigate porting it: https://developer.android.com/ndk/guides/graphics/index.html
-
------------------------------------------------------------------------
-## **Can I run this on the web?**
-
-This code base currently can't run on the web.  But we are really interested in recent developments that could help do this. The biggest is ImGui is running in a browser: https://pbrfrat.com/post/imgui_in_browser.html
-
-So it looks like this approach could be extended to our app framework. We have an interest in this but haven't done it yet.
-
-We are also part of the WC3 GPU on the Web Community Group.  They are working towards an interface that will connect the web to "modern 3D graphics and computation capabilities".  From what we're seeing this will likely resemble Vulkan and would be a great target platform for GPU Script.
-
------------------------------------------------------------------------
-## **What about old hardware that won’t run Vulkan?**
-
-Just recently there has been an amazing development in running Vulkan on hardware:
-* With graphics cards and graphics drivers that don't support Vulkan 
-* With no graphics card
-
-The development is the open source Google project Swiftshader. SwiftShader is a high-performance CPU-based implementation of the Vulkan. Its goal is to provide hardware independence for advanced 3D graphics.
-
-What's cool is that SwiftShader is optimized to turn Vulkan into smart, multi-threaded CPU calls and improves the performance of games or 3D content on low-end machines.
-
------------------------------------------------------------------------
